@@ -51,8 +51,11 @@ services:
       SERVICE_NAME: mysql
     networks:
       - app-network
- 
+    volumes:
+      - db_data:/var/lib/mysql
 #Docker Networks
 networks:
   app-network:
     driver: bridge
+volumes:
+  db_data:
