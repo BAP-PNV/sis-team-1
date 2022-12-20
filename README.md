@@ -8,11 +8,21 @@
 
     cd laravel
    ```
-2. Start docker-compose
+2. Install vender by compose
+   ```
+   docker run --rm -v $(pwd):/app composer install
+   ```
+3. Start docker-compose
     ```
     docker-compose up -d --build
     ```
-3. Setup laravel
+4. Up date permission
+   ```
+   cd ../
+   sudo chown -R $USER:$USER laravel
+   cd laravel
+   ```
+5. Setup laravel
    ```
    cp .env.example .env
    ```
@@ -25,7 +35,7 @@
     DB_USERNAME=laraveldocker
     DB_PASSWORD=laraveldocker123
    ```
-4. Access to app 
+6. Access to app 
    ```
     docker exec -it app bash
    ```
