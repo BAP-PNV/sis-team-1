@@ -1,21 +1,21 @@
 <?php
 
-namespace App\Repositories\Eloquent;
+namespace App\Repositories\Interfaces;
 
-use App\Repositories\RepositoryInterface;
+use App\Repositories\Interfaces\RepositoryInterface;
 
-abstract class BaseRepository implements EloquentRepositoryInterface
+abstract class BaseRepository implements RepositoryInterface
 {
-    //model muốn tương tác
+    //model want to interact
     protected $model;
 
-   //khởi tạo
+   //initial
     public function __construct()
     {
         $this->setModel();
     }
 
-    //lấy model tương ứng
+    //get modal
     abstract public function getModel();
 
     /**

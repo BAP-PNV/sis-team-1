@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Repositories\Interface;
+namespace App\Repositories\Interfaces;
 
-interface EloquentRepositoryInterface
+interface RepositoryInterface
 {
     /**
      * Get all
