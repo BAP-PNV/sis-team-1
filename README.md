@@ -39,7 +39,7 @@
    ```
     docker exec -it app bash
    ```
-   generate new key
+   generate new key[README.md](README.md)
    ```
     php artisan key:generate
    ```
@@ -56,3 +56,4 @@
    ```
    It work
    ![alt text](assets/Screenshot%20from%202022-12-17%2010-24-58.png)
+7. {{ route('cars.create') }}
