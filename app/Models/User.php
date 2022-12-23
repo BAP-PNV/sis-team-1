@@ -13,8 +13,4 @@ class User extends Model
     {
         return $this -> hasOne(Profile::class,'userId','id');
     }
-//    public function folders(): \Illuminate\Database\Eloquent\Relations\HasMany
-//    {
-//        return $this -> hasMany(Folder::class, 'ownerId','id');
-//    }
 }
