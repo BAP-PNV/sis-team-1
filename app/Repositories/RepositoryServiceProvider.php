@@ -6,6 +6,10 @@ use App\Repositories\Eloquent\BaseRepository;
 use App\Repositories\Interfaces\RepositoryInterface;
 use App\Repositories\User\UserRepository;
 use App\Repositories\User\UserRepositoryInterface;
+use App\Services\Interfaces\IAuthService;
+use App\Services\Implements\AuthService;
+
+
 use Illuminate\Support\ServiceProvider;
 
 
