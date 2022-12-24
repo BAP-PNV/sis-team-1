@@ -2,9 +2,9 @@
 
 namespace App\Repositories\Eloquent;
 
-use App\Repositories\Interfaces\RepositoryInterface;
+use App\Repositories\Interfaces\IRepository;
 
-abstract class BaseRepository implements RepositoryInterface
+abstract class BaseRepository implements IRepository
 {
     //model want to interact
     protected $model;

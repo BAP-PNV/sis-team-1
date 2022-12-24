@@ -4,7 +4,7 @@ namespace App\Repositories\User;
 use App\Repositories\Eloquent\BaseRepository;
 
 
-class UserRepository extends BaseRepository implements UserRepositoryInterface
+class UserRepository extends BaseRepository implements IUserRepository
 {
     public function getModel()
     {

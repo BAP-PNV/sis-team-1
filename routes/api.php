@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\UserController;
+use App\Http\Controllers\AuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -19,8 +19,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get("/",[UserController::class,"getLogin"]);
-Route::post('register', [UserController::class,"register"]);
-Route::post('login', [UserController::class,"login"]);
-Route::get('/user-info',[UserController::class,"getUserInfo"])->middleware("jwt.auth");;
-Route::get("/get-info",[UserController::class,"getData"])->middleware("jwt.auth");
+Route::get("/",[AuthController::class,"getLogin"]);
+Route::post('register', [AuthController::class,"register"]);
+Route::post('login', [AuthController::class,"login"]);
+Route::get('/user-info',[AuthController::class,"getUserInfo"]);
+Route::get("/get-info",[AuthController::class,"confirm"]);
+Route::get("/",[AuthController::class,"confirm"]);
