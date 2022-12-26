@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\SignUpRequest;
 use Illuminate\Http\Request;
 use App\Services\Implements\AuthService;
 use Validator;
@@ -54,14 +55,10 @@ class AuthController extends Controller
      * @param  mixed $request
      * @return void
      */
-    public function register(Request $request)
+    public function register(SignUpRequest $request)
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|between:2,100',
-            'email' => 'required|string|email|max:100',
-            'password' => 'required|',
-        ]);
-        $token = $this->auth->register($validator->validated());
+        $validator = $request->validated();
+        $token = $this->auth->register($validator);
         return response()->json([
             'message' => 'Please confirm via email',
             'token' => $token
