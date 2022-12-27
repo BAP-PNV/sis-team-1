@@ -2582,11 +2582,7 @@
                     "type": "github"
                 }
             ],
-<<<<<<< HEAD
-            "time": "2022-10-28T22:51:32+00:00"
-=======
             "time": "2022-12-20T19:00:15+00:00"
->>>>>>> develop
         },
         {
             "name": "phpoption/phpoption",
