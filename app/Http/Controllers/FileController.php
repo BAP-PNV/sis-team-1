@@ -96,6 +96,10 @@ class FileController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $status =  $this->awsS3->delete('laravel/user_01/'.'1672131286-VNP_PHP_INTERN.pdf');
+        if ($status) {
+            return $status;
+        }
+        return 0;
     }
 }

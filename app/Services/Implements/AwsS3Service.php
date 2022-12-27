@@ -13,8 +13,8 @@ class AwsS3Service implements IAwsService
     public function create(UploadedFile $file)
     {
         $fileName = time() . '-' . $file->getClientOriginalName();
-        $path =  Storage::disk('s3')->put('laravel/'.$this->id.$fileName,file_get_contents($file));
-        $path = $this->show('laravel/'.$this->id.$fileName);
+        $path =  Storage::disk('s3')->put('laravel/' . $this->id . $fileName, file_get_contents($file));
+        $path = $this->show('laravel/' . $this->id . $fileName);
         return $path;
     }
     public function show(string $url)
@@ -22,5 +22,13 @@ class AwsS3Service implements IAwsService
         $file = Storage::disk('s3')->url($url);
         return $file;
     }
-
+    public function delete(string $url)
+    {
+        if (Storage::disk('s3')->exists($url)) {
+            $status = Storage::disk('s3')->delete($url);
+            return $status;
+        } else {
+            return "not found";
+        }
+    }
 }
