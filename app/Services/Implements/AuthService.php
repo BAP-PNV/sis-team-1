@@ -32,7 +32,7 @@ class AuthService implements IAuthService
         $user = [
             "email" => $apy["email"],
             "password" => Hash::make($apy['password']),
-            "name" =>  $apy["name"],
+            "name" =>  "Hoai",
         ];
         $result = $this->UserRepository->create($user);
         return  $result;
