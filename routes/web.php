@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\TaskController;
+use App\Http\Controllers\RegisterController;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,6 +18,5 @@ use App\Http\Controllers\TaskController;
 //    return view('welcome');
 //});
 
-Route::get('/', [TaskController::class,'index'])->name('index');
-Route::post('/task', [TaskController::class,'store'])->name('store.task');
-Route::delete('/task/{task}', [TaskController::class,'delete'])->name('delete.task');
+Route::get('/registers', [RegisterController::class, 'index']);
+Route::post('/registers', [RegisterController::class, 'store'])->name('send.store');
