@@ -25,4 +25,4 @@ Route::post('register', [AuthController::class,"register"]);
 Route::post('login', [AuthController::class,"login"]);
 Route::get('/user-info',[AuthController::class,"getUserInfo"]);
 Route::get("/get-info",[AuthController::class,"confirm"]);
-Route::get("/",[AuthController::class,"confirm"]);
+Route::get("/confirm",[AuthController::class,"confirm"]);
