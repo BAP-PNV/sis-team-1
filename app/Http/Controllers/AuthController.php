@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Services\Implements\AuthService;
 use Validator;
 
+// use function Psy\debug;
 
 class AuthController extends Controller
 {
@@ -20,24 +21,34 @@ class AuthController extends Controller
      */
     public function __construct(AuthService $auth)
     {
-        $this->middleware('auth:api', ['except' => ['login', 'register']]);
+        $this->middleware('auth:api', ['except' => ['login', 'register','confirm']]);
         $this->auth = $auth;
     }
 
     /**
      * login
      *
-     * @param  mixed $request
+     * @param  mixed $request 
      * @return void
      */
     public function login(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'email' => 'required|email',
-            'password' => 'required',
+            'password' => 'required|min:8',
         ]);
-        return true;
-    }
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+        if (! $token = auth()->attempt($validator->validated())) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+        // return $this->createNewToken($token);
+        // return redirect('/');
+    } 
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+    ];
     /**
      * confirm
      *

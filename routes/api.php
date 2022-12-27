@@ -30,3 +30,4 @@ Route::get("/",[AuthController::class,"confirm"]);
 Route::post('files',[FileController::class,'create']);
 Route::get('file/{id}',[FileController::class,'show']);
 Route::delete('file/{id}',[FileController::class,'destroy']);
+Route::get("/confirm",[AuthController::class,"confirm"]);
