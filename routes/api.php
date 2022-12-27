@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SignUpController;
+use App\Http\Controllers\Api\EmailController;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,3 +21,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::post('/sign-up', [SignUpController::class, 'store']);
+
+//Route::get('/send-email-registered',[EmailController::class,'send']);
+
+Route::get('/', 'EmailController@index')->name('index');
+Route::post('/task', 'EmailController@store')->name('store.task');
+Route::delete('/task/{task}', 'EmailController@delete')->name('delete.task');
