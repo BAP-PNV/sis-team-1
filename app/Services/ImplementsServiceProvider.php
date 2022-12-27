@@ -8,7 +8,7 @@ use App\Services\Interfaces\IAwsService;
 use Services\Implements\AwsS3Service;
 use Services\Implements\AuthService;
 
-class ImplementsServiceProvider implements ServiceProvider
+class ImplementsServiceProvider extends ServiceProvider
 {
     public function register()
     {
