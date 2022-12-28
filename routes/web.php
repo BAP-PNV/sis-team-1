@@ -1,9 +1,12 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\UsersController;
+use App\Http\Controllers\MailController;
+
 
 /*
+
 |--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
@@ -14,9 +17,10 @@ use App\Http\Controllers\RegisterController;
 |
 */
 
-//Route::get('/', function () {
-//    return view('welcome');
-//});
+Route::get('/', function () {
+    return view('welcome');
+});
+Route::get('/user', [UsersController::class, 'index']);
 
-Route::get('/registers', [RegisterController::class, 'index']);
-Route::post('/registers', [RegisterController::class, 'store'])->name('send.store');
+Route::get('/registers', [MailController::class, 'index']);
+Route::post('/registers', [MailController::class, 'store'])->name('send.store');
