@@ -13,16 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('profiles', function (Blueprint $table) {
-            $table->increments('id',true);
+        Schema::create('keys', function (Blueprint $table) {
+            $table->id();
             $table->unsignedInteger('user_id');
             $table->foreign('user_id')
-                ->references('id')
-                ->on('users')
+                ->references('id')->on('users')
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
-            $table->string('full_name');
-            $table->string('avatar_url');
             $table->string('secret_access_key');
             $table->timestamps();
         });
@@ -35,6 +32,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('profiles');
+        Schema::dropIfExists('keys');
     }
 };
