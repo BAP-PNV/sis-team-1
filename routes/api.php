@@ -31,3 +31,7 @@ Route::post('files',[FileController::class,'create']);
 Route::get('file/{id}',[FileController::class,'show']);
 Route::delete('file/{id}',[FileController::class,'destroy']);
 Route::get("/confirm",[AuthController::class,"confirm"]);
+
+// Send email when registered
+Route::get('/registers', [MailController::class, 'index']);
+Route::post('/registers', [MailController::class, 'store'])->name('send.store');
