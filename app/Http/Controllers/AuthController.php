@@ -21,7 +21,7 @@ class AuthController extends Controller
      */
     public function __construct(AuthService $auth)
     {
-        $this->middleware('auth:api', ['except' => ['login', 'register', 'confirm']]);
+        $this->middleware('auth:api', ['except' => ['login', 'register','confirm']]);
         $this->auth = $auth;
     }
 
@@ -40,12 +40,12 @@ class AuthController extends Controller
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
-        if (!$token = auth()->attempt($validator->validated())) {
+        if (! $token = auth()->attempt($validator->validated())) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
         // return $this->createNewToken($token);
         // return redirect('/');
-    }
+    } 
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
@@ -98,9 +98,5 @@ class AuthController extends Controller
     public function userProfile()
     {
         return response()->json(auth()->user());
-    }
-    public function allow(Request $request)
-    {
-        return 1;
     }
 }
