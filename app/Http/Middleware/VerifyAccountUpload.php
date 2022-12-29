@@ -2,7 +2,7 @@
 
 namespace App\Http\Middleware;
 
-use app\Helpers\SecretKeyHelper;
+use App\Helpers\SecretKeyHelper;
 use App\Traits\ApiResponse;
 use Closure;
 use Illuminate\Http\Request;
@@ -19,7 +19,11 @@ class VerifyAccountUpload
      */
     public function handle(Request $request, Closure $next)
     {
-        if (SecretKeyHelper::checkKey($request->get('secret_access'))) {
+        if (!$request->has('access_key')) {
+            return $this->responseErrorWithData([
+                "detail" => "Not found key"
+            ]);
+        } else if (SecretKeyHelper::checkKey($request->get('access_key'))) {
             return $next($request);
         }
         return $this->responseErrorUnauthorized();

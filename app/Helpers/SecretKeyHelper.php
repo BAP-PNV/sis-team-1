@@ -1,16 +1,17 @@
 <?php
+
 namespace app\Helpers;
 
-use App\Repositories\Key\IKeyRepository;
 use App\Repositories\Key\KeyRepository;
 
 class SecretKeyHelper
 {
 
-    private static IKeyRepository $secretKey;
+    private static KeyRepository $secretKey;
 
-    public static function checkKey(string $string){
+    public static function checkKey(string $string)
+    {
+        SecretKeyHelper::$secretKey = new KeyRepository;
         return SecretKeyHelper::$secretKey->hasKey($string);
     }
-   
 }

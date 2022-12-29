@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Key extends Model
 {
     use HasFactory;
+    protected $table = 'users_key';
     public function user()
     {
        return $this->belongsTo(User::class);
