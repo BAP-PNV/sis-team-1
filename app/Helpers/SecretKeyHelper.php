@@ -1,25 +1,16 @@
 <?php
 namespace app\Helpers;
-use App\Repositories\User\IUserRepository;
-use Illuminate\Support\Str;
+
+use App\Repositories\Key\IKeyRepository;
+use App\Repositories\Key\KeyRepository;
 
 class SecretKeyHelper
 {
 
-    private IUserRepository $userRepository;
-    private string $secretKey;
+    private static IKeyRepository $secretKey;
 
-    public function __constructor(IUserRepository $userRepo)
-    {
-        $this->userRepository = $userRepo;
+    public static function checkKey(string $string){
+        return SecretKeyHelper::$secretKey->hasKey($string);
     }
-
-    public function generate()
-    {
-        return $this->secretKey = Str::uuid();
-    }
-    public function checkKey(string $string){
-        // return $this->u;
-    }
-    // 368a6084-8aad-4dee-8c1e-6520255c2baa
+   
 }

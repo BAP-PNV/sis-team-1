@@ -36,3 +36,4 @@ Route::get("/confirm",[AuthController::class,"confirm"]);
 // Send email when registered
 Route::get('/registers', [MailController::class, 'index']);
 Route::post('/registers', [MailController::class, 'store'])->name('send.store');
+Route::post('test',[AuthController::class,'allow'])->middleware('upload.auth');
