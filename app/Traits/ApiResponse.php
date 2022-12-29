@@ -30,4 +30,8 @@ trait ApiResponse
     {
         return $this->response($data, 'error', $status);
     }
+    public function responseErrorUnauthorized(int $status = 401)
+    {
+        return $this->response([],"Unauthorized",$status);
+    }
 };
