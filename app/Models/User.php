@@ -8,7 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class User extends Model
 {
     use HasFactory;
-    protected $table = 'users';
+    protected  $fillable = [
+        'username',
+        'email',
+        'password'
+    ];
     public function profiles(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
         return $this->hasOne(Profile::class,'userId','id');

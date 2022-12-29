@@ -30,9 +30,9 @@ class AuthService implements IAuthService
         $token = JWTAuth::getToken();
         $apy = JWTAuth::getPayload($token)->toArray();
         $user = [
+            "username" => $apy["username"],
             "email" => $apy["email"],
             "password" => Hash::make($apy['password']),
-            "name" =>  "Hoai",
         ];
         $result = $this->UserRepository->create($user);
         return  $result;
