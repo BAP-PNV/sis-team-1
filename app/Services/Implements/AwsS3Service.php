@@ -31,4 +31,9 @@ class AwsS3Service implements IAwsService
             return "not found";
         }
     }
+
+    public function showFile(string $url)
+    {
+        return  Storage::disk('s3')->response('laravel/'. $this->id .$url);
+    }
 }

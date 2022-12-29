@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Profile;
 use App\Services\Implements\AwsS3Service;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
+
 
 class FileController extends Controller
 {
@@ -101,5 +102,11 @@ class FileController extends Controller
             return $status;
         }
         return 0;
+    }
+
+    public function showFile($file)
+    {
+        $profile = Profile::where('secret_access_key','=',$file)->first();
+        return $this->awsS3->showFile($profile['avatar_url']);
     }
 }
