@@ -28,7 +28,7 @@ Route::post('login', [AuthController::class,"login"]);
 Route::get('/user-info',[AuthController::class,"getUserInfo"]);
 Route::get("/get-info",[AuthController::class,"confirm"]);
 Route::get("/",[AuthController::class,"confirm"]);
-Route::post('files',[FileController::class,'create']);
+Route::post('files',[FileController::class,'create'])->middleware('upload.auth');;
 Route::get('file/{id}',[FileController::class,'show']);
 Route::delete('file/{id}',[FileController::class,'destroy']);
 Route::get("/confirm",[AuthController::class,"confirm"]);

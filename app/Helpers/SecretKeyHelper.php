@@ -10,7 +10,7 @@ class SecretKeyHelper
 
     private static KeyRepository $secretKey;
 
-    public static function checkKey(string $string)
+    public static function checkKey(string $string):int
     {
         SecretKeyHelper::load();
         return SecretKeyHelper::$secretKey->hasKey($string);

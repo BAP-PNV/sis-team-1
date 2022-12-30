@@ -3,16 +3,20 @@
 namespace App\Http\Controllers;
 
 use App\Services\Implements\AwsS3Service;
+use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 class FileController extends Controller
 {
+    use ApiResponse;
     private AwsS3Service $awsS3;
+
     public function __construct(AwsS3Service $awsS3)
     {
         $this->awsS3 = $awsS3;
     }
+
     /**
      * Display a listing of the resource.
      *
@@ -31,16 +35,21 @@ class FileController extends Controller
     public function create(Request $request)
     {
         if ($request->hasFile('image')) {
+
             $file = $request->file('image');
-            $path = $this->awsS3->create($file);
-            return response()->json([
-                'message'=>'success',
-                'path'=> $path
-            ],201);
+            $path = $this->awsS3->create($file, $request->user_id);
+
+            if ($path != -1) {
+                return response()->json([
+                    'message' => 'success',
+                    'path' => $path
+                ], 201);
+            }
+
+            return $this->responseErrorWithData(["Storage" => "not enough storage space"]);
         }
-        return response()->json([
-            'data'=>'fail'
-        ],412);  
+
+        return $this->responseErrorWithData(["image" => "Not found"]);;
     }
 
     /**
@@ -96,7 +105,7 @@ class FileController extends Controller
      */
     public function destroy($id)
     {
-        $status =  $this->awsS3->delete('laravel/user_01/'.'1672131286-VNP_PHP_INTERN.pdf');
+        $status =  $this->awsS3->delete('laravel/user_01/' . '1672131286-VNP_PHP_INTERN.pdf');
         if ($status) {
             return $status;
         }

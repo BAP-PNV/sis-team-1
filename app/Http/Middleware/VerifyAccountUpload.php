@@ -19,13 +19,21 @@ class VerifyAccountUpload
      */
     public function handle(Request $request, Closure $next)
     {
-        if (!$request->has('access_key')) {
-            return $this->responseErrorWithData([
-                "detail" => "Not found key"
-            ]);
-        } else if (SecretKeyHelper::checkKey($request->get('access_key'))) {
-            return $next($request);
+        if ($request->has('access_key')) {
+
+            $idUser = SecretKeyHelper::checkKey($request->get('access_key'));
+
+            if ($idUser != -1) {
+                return $next($request->merge(["user_id" => $idUser]));
+            }
+
+            return $this->responseErrorUnauthorized();
         }
-        return $this->responseErrorUnauthorized();
+
+        return $this->responseErrorWithData([
+            "detail" => "Not found key"
+        ]);
+        
     }
+
 }
