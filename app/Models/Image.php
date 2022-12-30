@@ -5,12 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Key extends Model
+class Image extends Model
 {
     use HasFactory;
-    protected $table = 'keys';
-    public function user()
+    protected $table = 'images';
+    public function folder()
     {
-       return $this->belongsTo(User::class);
+        return $this->belongsTo(Folder::class);
     }
 }
