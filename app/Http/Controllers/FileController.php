@@ -5,9 +5,12 @@ namespace App\Http\Controllers;
 use App\Services\Implements\AwsS3Service;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use \App\Traits\ApiResponse;
+// use App\Traits\ApiResponse;
 
 class FileController extends Controller
 {
+    use ApiResponse;
     private AwsS3Service $awsS3;
     public function __construct(AwsS3Service $awsS3)
     {
@@ -33,14 +36,9 @@ class FileController extends Controller
         if ($request->hasFile('image')) {
             $file = $request->file('image');
             $path = $this->awsS3->create($file);
-            return response()->json([
-                'message'=>'success',
-                'path'=> $path
-            ],201);
+            return $this->responseSuccessWithData(['file' => $path], 201);
         }
-        return response()->json([
-            'data'=>'fail'
-        ],412);  
+        return $this->responseError(400);
     }
 
     /**
@@ -96,7 +94,7 @@ class FileController extends Controller
      */
     public function destroy($id)
     {
-        $status =  $this->awsS3->delete('laravel/user_01/'.'1672131286-VNP_PHP_INTERN.pdf');
+        $status =  $this->awsS3->delete('laravel/user_01/' . '1672131286-VNP_PHP_INTERN.pdf');
         if ($status) {
             return $status;
         }
@@ -104,28 +102,34 @@ class FileController extends Controller
     }
     public function destroyFolder(Request $request)
     {
-        $folderName = $request->get('folder');
-        // dd($folderName);
+        $folderName = $request->get('folderName');
         $status = $this->awsS3->deleteFolder($folderName);
         if ($status) {
-            return $status;
+            return $this->responseSuccess(200);
         }
-        return 0;
+        return $this->responseErrorWithData(['folder'=>'Not exist'],401);
     }
     public function createFolder(Request $request)
     {
+        if ($request->has('folderName')) {
             $folderName = $request->input('folderName');
             $path = $this->awsS3->createFolder($folderName);
-            return response()->json([
-                'message'=>'success',
-                'path'=> $path
-            ],201);
-        return response()->json([
-            'data'=>'fail'
-        ],412);  
+            if ($path) {
+                return $this->responseSuccessWithData(['folder' => $path], 201);
+            } else {
+                return $this->responseErrorWithData(['folder'=>'folder existed'], 400);
+            }
+        }
+        return $this->responseErrorWithData(['param'=>'Not found'],401);
+       
     }
     public function showFolder(Request $request)
     {
-        return  $this->awsS3->showFolder('$folderName');
+        $path = $this->awsS3->showFolder('$folderName');
+        if ($path) {
+            return $this->responseSuccessWithData(['folders' => $path], 201);
+        } else {
+            return $this->responseErrorWithData(['folder'=>'Not exist'],401);
+        }
     }
 }
