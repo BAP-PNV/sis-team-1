@@ -102,4 +102,30 @@ class FileController extends Controller
         }
         return 0;
     }
+    public function destroyFolder(Request $request)
+    {
+        $folderName = $request->get('folder');
+        // dd($folderName);
+        $status = $this->awsS3->deleteFolder($folderName);
+        if ($status) {
+            return $status;
+        }
+        return 0;
+    }
+    public function createFolder(Request $request)
+    {
+            $folderName = $request->input('folderName');
+            $path = $this->awsS3->createFolder($folderName);
+            return response()->json([
+                'message'=>'success',
+                'path'=> $path
+            ],201);
+        return response()->json([
+            'data'=>'fail'
+        ],412);  
+    }
+    public function showFolder(Request $request)
+    {
+        return  $this->awsS3->showFolder('$folderName');
+    }
 }

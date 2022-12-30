@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\FileController;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SignUpController;
@@ -31,6 +32,10 @@ Route::post('files',[FileController::class,'create']);
 Route::get('file/{id}',[FileController::class,'show']);
 Route::delete('file/{id}',[FileController::class,'destroy']);
 Route::get("/confirm",[AuthController::class,"confirm"]);
+Route::post('folders',[FileController::class,'createFolder']);
+Route::delete('folders',[FileController::class,'destroyFolder']);
+Route::get('folders',[FileController::class,'showFolder']);
+
 
 // Send email when registered
 Route::get('/registers', [MailController::class, 'index']);
