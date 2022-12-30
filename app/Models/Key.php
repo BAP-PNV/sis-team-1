@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Key extends Model
 {
     use HasFactory;
-    protected $table = 'keys';
+    protected $table = 'api_keys';
     public function user()
     {
        return $this->belongsTo(User::class);
