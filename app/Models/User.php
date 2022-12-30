@@ -10,12 +10,16 @@ class User extends Model
 {
     use HasFactory;
     protected $table = 'users';
-    public function profiles(): \Illuminate\Database\Eloquent\Relations\HasOne
+    public function profile()
     {
         return $this->hasOne(Profile::class,'userId','id');
     }
     public function key()
     {
         return $this->hasOne(Key::class);
+    }
+    public function folders()
+    {
+        return $this->hasMany(Folder::class);
     }
 }
