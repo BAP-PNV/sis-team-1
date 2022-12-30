@@ -16,6 +16,7 @@ services:
     working_dir: /var/www/html/
     volumes:
       - ./:/var/www/html
+      - ./php/laravel.ini:/usr/local/etc/php/conf.d/uploads.ini
     networks:
       - app-network
  
