@@ -9,11 +9,11 @@ class ImageRepository extends BaseRepository implements IImageRepository
 
     public function getModel()
     {
-        return 3;
+        return \App\Models\Image::class;
     }
 
-    public function calStorage(string $key): float
+    public  function calStorage(string $id): float
     {
-        return $this->model->where('user_id', '=', $key)->sum('size');
+        return $this->model->where('user_id', '=', $id)->sum('size');
     }
 }
