@@ -14,12 +14,12 @@ class KeyRepository extends BaseRepository implements IKeyRepository
 
     public function hasKey(string $string)
     {
-        $User = $this->model->where('secret_access_key', '=', $string)->first();
+        $Key = $this->model->where('secret_access_key', '=', $string)->first();
 
-        if (is_null($User)) {
+        if (is_null($Key)) {
             return -1;
         }
 
-        return $User->user_id;
+        return $Key->user_id;
     }
 }
