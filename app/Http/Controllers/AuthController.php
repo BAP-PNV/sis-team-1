@@ -3,12 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\SignUpRequest;
+use App\Models\User;
 use Illuminate\Http\Request;
 use App\Services\Implements\AuthService;
+use App\Traits\ApiResponse;
 use Validator;
 
 class AuthController extends Controller
 {
+    use ApiResponse;
     private AuthService $auth;
 
     /**
@@ -42,7 +45,7 @@ class AuthController extends Controller
         if (!$token = auth()->attempt($validator->validated())) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
-        
+
         // return $this->createNewToken($token);
         // return redirect('/');
     }
@@ -57,7 +60,10 @@ class AuthController extends Controller
      */
     public function confirm(Request $request)
     {
-        return $this->auth->confirmRegister($request);
+        if ($this->auth->confirmRegister($request)) {
+            return $this->responseSuccessWithData(["user" => "create new user successful"], 201);
+        }
+        return $this->responseErrorWithData(["user" => "please check the email"]);;
     }
 
     /**
