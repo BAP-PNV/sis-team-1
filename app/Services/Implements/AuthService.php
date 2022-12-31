@@ -4,14 +4,19 @@ namespace App\Services\Implements;
 
 use App\Repositories\User\IUserRepository;
 use App\Services\Interfaces\IAuthService;
+use App\Traits\ApiResponse;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Tymon\JWTAuth\Exceptions\JWTException;
+use Tymon\JWTAuth\Exceptions\TokenInvalidException;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Tymon\JWTAuth\Facades\JWTFactory;
 
 
 class AuthService implements IAuthService
 {
+    use ApiResponse;
     private IUserRepository $UserRepository;
 
     public function __construct(IUserRepository $UserRepository)
@@ -26,16 +31,26 @@ class AuthService implements IAuthService
     }
     public function confirmRegister(Request $request)
     {
+        try {
+            $token = JWTAuth::getToken();
+            $apy = JWTAuth::getPayload($token)->toArray();
+        } catch (TokenInvalidException $e) {
+            return $this->responseErrorWithData(['token' => 'Invalid token']);;
+        } catch (JWTException $e) {
+            return $this->responseErrorWithData(['token' => 'Not found']);
+        }
 
-        $token = JWTAuth::getToken();
-        $apy = JWTAuth::getPayload($token)->toArray();
         $user = [
             "email" => $apy["email"],
             "password" => Hash::make($apy['password']),
-            "name" =>  "Hoai",
+            "username" => $apy["username"],
         ];
-        $result = $this->UserRepository->create($user);
-        return  $result;
+        try {
+            $this->UserRepository->create($user);
+            return true;
+        } catch (QueryException) {
+            return false;
+        }
     }
     public function login(Request $request)
     {
