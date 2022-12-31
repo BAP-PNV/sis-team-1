@@ -107,7 +107,7 @@ class FileController extends Controller
         if ($status) {
             return $this->responseSuccess(200);
         }
-        return $this->responseErrorWithData(['folder'=>'Not exist'],401);
+        return $this->responseErrorWithData(['folder' => 'Not exist'], 401);
     }
     public function createFolder(Request $request)
     {
@@ -117,11 +117,10 @@ class FileController extends Controller
             if ($path) {
                 return $this->responseSuccessWithData(['folder' => $path], 201);
             } else {
-                return $this->responseErrorWithData(['folder'=>'folder existed'], 400);
+                return $this->responseErrorWithData(['folder' => 'folder existed'], 400);
             }
         }
-        return $this->responseErrorWithData(['param'=>'Not found'],401);
-       
+        return $this->responseErrorWithData(['param' => 'Not found'], 401);
     }
     public function showFolder(Request $request)
     {
@@ -129,7 +128,7 @@ class FileController extends Controller
         if ($path) {
             return $this->responseSuccessWithData(['folders' => $path], 201);
         } else {
-            return $this->responseErrorWithData(['folder'=>'Not exist'],401);
+            return $this->responseErrorWithData(['folder' => 'Not exist'], 401);
         }
     }
 }
