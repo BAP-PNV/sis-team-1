@@ -17,14 +17,9 @@ class FileController extends Controller
         $this->awsS3 = $awsS3;
     }
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        return $request;
     }
 
     /**
