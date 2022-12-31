@@ -25,7 +25,7 @@ Route::post('register', [AuthController::class,"register"]);
 Route::post('login', [AuthController::class,"login"]);
 Route::get('/user-info',[AuthController::class,"getUserInfo"]);
 Route::get("/get-info",[AuthController::class,"confirm"]);
-Route::get("/confirm",[AuthController::class,"confirm"]);
+Route::get("/confirm",[AuthController::class,"confirm"])->middleware('jwt.auth.middleware');
 
 Route::middleware(['upload.auth'])->group(function(){
     Route::post('file',[FileController::class,'create']);
@@ -36,5 +36,5 @@ Route::get('file/{id}',[FileController::class,'show']);
 
 // Send email when registered
 Route::get('/registers', [MailController::class, 'index']);
-Route::post('/registers', [MailController::class, 'store'])->name('send.store');
+// Route::post('/registers', [MailController::class, 'store'])->name('send.store');
 Route::post('test',[AuthController::class,'allow'])->middleware('upload.auth');

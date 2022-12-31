@@ -2,14 +2,14 @@
 
 namespace App\Services\Implements;
 
+use App\Helpers\SecretKeyHelper;
+use App\Repositories\Key\IKeyRepository;
 use App\Repositories\User\IUserRepository;
 use App\Services\Interfaces\IAuthService;
 use App\Traits\ApiResponse;
-use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Tymon\JWTAuth\Exceptions\JWTException;
-use Tymon\JWTAuth\Exceptions\TokenInvalidException;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Tymon\JWTAuth\Facades\JWTFactory;
 
@@ -18,10 +18,11 @@ class AuthService implements IAuthService
 {
     use ApiResponse;
     private IUserRepository $UserRepository;
-
-    public function __construct(IUserRepository $UserRepository)
+    private IKeyRepository $keyRepository;
+    public function __construct(IUserRepository $UserRepository, IKeyRepository $keyRepository)
     {
         $this->UserRepository = $UserRepository;
+        $this->keyRepository = $keyRepository;
     }
     public function register(array $data)
     {
@@ -31,26 +32,28 @@ class AuthService implements IAuthService
     }
     public function confirmRegister(Request $request)
     {
-        try {
-            $token = JWTAuth::getToken();
-            $apy = JWTAuth::getPayload($token)->toArray();
-        } catch (TokenInvalidException $e) {
-            return $this->responseErrorWithData(['token' => 'Invalid token']);;
-        } catch (JWTException $e) {
-            return $this->responseErrorWithData(['token' => 'Not found']);
-        }
 
-        $user = [
+        $apy = $request->apy;
+        $userInfo = [
             "email" => $apy["email"],
             "password" => Hash::make($apy['password']),
             "username" => $apy["username"],
         ];
+        DB::beginTransaction();
         try {
-            $this->UserRepository->create($user);
+            $user = $this->UserRepository->create($userInfo);
+            $key = [
+                "user_id" => $user->id,
+                'secret_access_key' => SecretKeyHelper::generate()
+            ];
+            $this->keyRepository->create($key);
+            DB::commit();
             return true;
-        } catch (QueryException) {
+        } catch (\Exception) {
+            DB::rollBack();
             return false;
         }
+       
     }
     public function login(Request $request)
     {
