@@ -3,6 +3,7 @@
 namespace App\Services\Implements;
 
 use App\Constants\App;
+use App\Repositories\User\IUserRepository;
 use App\Services\Interfaces\IAwsService;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -10,17 +11,23 @@ use Illuminate\Support\Facades\Storage;
 
 class AwsS3Service implements IAwsService
 {
-    private string $id = 'user_01/';
 
-    public function create(UploadedFile $file,int $idUser)
+    private IUserRepository $userRepository;
+
+    public function __construct(IUserRepository $userRepository)
     {
+        $this->userRepository = $userRepository;
+    }
+
+    public function create(UploadedFile $file, int $idUser)
+    {
+        $username = $this->userRepository->find($idUser)->username."/";
+ 
         if (App::STORAGE > (checkStorage($idUser) + convertBtoMB($file->getSize()))) {
-
             $fileName = time() . '-' . $file->getClientOriginalName();
-            $path =  Storage::disk('s3')->put('laravel/' . $this->id . $fileName, file_get_contents($file));
-            $path = $this->show('laravel/' . $this->id . $fileName);
+            Storage::disk('s3')->put('laravel/' . $username . $fileName, file_get_contents($file));
+            $path = $this->show('laravel/' . $username . $fileName);
             return $path;
-
         }
 
         return -1;
