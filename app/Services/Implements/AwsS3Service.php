@@ -3,6 +3,7 @@
 namespace App\Services\Implements;
 
 use App\Constants\App;
+use App\Repositories\Image\IImageRepository;
 use App\Services\Interfaces\IAwsService;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -11,6 +12,18 @@ use Illuminate\Support\Facades\Storage;
 class AwsS3Service implements IAwsService
 {
     private string $id = 'user_01/';
+
+    private IImageRepository $imageRepository;
+
+    public function __construct(IImageRepository $ImageRepository)
+    {
+        $this->imageRepository = $ImageRepository;
+    }
+
+    public function index(int $userId,int $folderId)
+    {
+        return $this->imageRepository->index($userId,$folderId);
+    }
 
     public function create(UploadedFile $file,int $idUser)
     {

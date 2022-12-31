@@ -19,7 +19,7 @@ class FileController extends Controller
 
     public function index(Request $request)
     {
-        return $request;
+        return $this->awsS3->index($request->user_id, $request->id);
     }
 
     /**
