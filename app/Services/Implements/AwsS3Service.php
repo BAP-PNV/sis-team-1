@@ -2,7 +2,7 @@
 
 namespace App\Services\Implements;
 
-use App\Constants\App;
+use App\Constants\AppConstant;
 use App\Repositories\Image\IImageRepository;
 use App\Repositories\User\IUserRepository;
 use App\Services\Interfaces\IAwsService;
@@ -17,10 +17,9 @@ class AwsS3Service implements IAwsService
     private IUserRepository $userRepository;
 
     public function __construct(
-            IImageRepository $ImageRepository,
-            IUserRepository $userRepository
-        )
-    {
+        IImageRepository $ImageRepository,
+        IUserRepository $userRepository
+    ) {
         $this->imageRepository = $ImageRepository;
         $this->userRepository = $userRepository;
     }
@@ -34,16 +33,16 @@ class AwsS3Service implements IAwsService
     {
         $username = $this->userRepository->find($idUser)->username . "/";
 
-        if (App::STORAGE > (checkStorage($idUser) + convertBtoMB($file->getSize()))) 
+        if (AppConstant::STORAGE > (checkStorage($idUser) + convertBtoMB($file->getSize()))) 
         {
             $fileName = time() . '-' . $file->getClientOriginalName();
             Storage::disk('s3')
-            ->put('laravel/' . $username . $fileName, file_get_contents($file));
-            $path = $this->show('laravel/' . $username . $fileName);
+                ->put(AppConstant::ROOT_FOLDER_S3_PATH . $username . $fileName, file_get_contents($file));
+            $path = $this->show(AppConstant::ROOT_FOLDER_S3_PATH . $username . $fileName);
             return $path;
         }
 
-        return App::RETURN_FALSE;
+        return AppConstant::RETURN_FALSE;
     }
 
     public function show(string $url)
@@ -65,27 +64,29 @@ class AwsS3Service implements IAwsService
 
     public function createFolder(string $folderName)
     {
-        if (Storage::disk('s3')->exists('laravel/' . $this->idFolder . $folderName)) {
+        if (Storage::disk('s3')->exists(AppConstant::ROOT_FOLDER_S3_PATH . $folderName)) {
             return false;
         } else {
-            Storage::disk('s3')->makeDirectory('laravel/' . $this->idFolder . $folderName);
+            Storage::disk('s3')->makeDirectory(AppConstant::ROOT_FOLDER_S3_PATH  . $folderName);
             $folder = Storage::disk('s3')->url($folderName);
             return $folder;
         }
     }
+
     public function showFolder(string $folderName)
     {
-        if (Storage::disk('s3')->exists('laravel/' . $this->idFolder . $folderName)) {
-            $folder = Storage::disk('s3')->allDirectories('laravel/' . $this->idFolder . $folderName);
+        if (Storage::disk('s3')->exists(AppConstant::ROOT_FOLDER_S3_PATH . $this->idFolder . $folderName)) {
+            $folder = Storage::disk('s3')->allDirectories(AppConstant::ROOT_FOLDER_S3_PATH . $this->idFolder . $folderName);
             return $folder;
         } else {
             return false;
         }
     }
+
     public function deleteFolder(string $folderName)
     {
-        if (Storage::disk('s3')->exists('laravel/' . $this->idFolder . $folderName)) {
-            $status = Storage::disk('s3')->deleteDirectory('laravel/' . $this->idFolder . $folderName);
+        if (Storage::disk('s3')->exists(AppConstant::ROOT_FOLDER_S3_PATH . $this->idFolder . $folderName)) {
+            $status = Storage::disk('s3')->deleteDirectory(AppConstant::ROOT_FOLDER_S3_PATH . $this->idFolder . $folderName);
             return $status;
         } else {
             return false;

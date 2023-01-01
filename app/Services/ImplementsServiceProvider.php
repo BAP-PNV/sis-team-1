@@ -5,8 +5,8 @@ namespace App\Services;
 use Illuminate\Support\ServiceProvider;
 use App\Services\Interfaces\IAuthService;
 use App\Services\Interfaces\IAwsService;
-use Services\Implements\AwsS3Service;
-use Services\Implements\AuthService;
+use App\Services\Implements\AwsS3Service;
+use App\Services\Implements\AuthService;
 
 class ImplementsServiceProvider extends ServiceProvider
 {

@@ -3,6 +3,8 @@
 namespace App\Repositories;
 
 use App\Repositories\Eloquent\BaseRepository;
+use App\Repositories\Folder\IFolderRepository;
+use App\Repositories\Folder\FolderRepository;
 use App\Repositories\Image\IImageRepository;
 use App\Repositories\Image\ImageRepository;
 use App\Repositories\Interfaces\IRepository;
@@ -36,6 +38,10 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->singleton(
             IImageRepository::class,
             ImageRepository::class
+        );
+        $this->app->singleton(
+            IFolderRepository::class,
+            FolderRepository::class
         );
     }
 

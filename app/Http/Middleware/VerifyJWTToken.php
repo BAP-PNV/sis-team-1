@@ -23,6 +23,9 @@ class VerifyJWTToken
      */
     public function handle(Request $request, Closure $next)
     {
+        if (!$request->has('token')) {
+            return $this->responseErrorWithData(['token' => 'Not found']);
+        }
         try {
             $token = JWTAuth::getToken();
             $apy = JWTAuth::getPayload($token)->toArray();
@@ -30,7 +33,7 @@ class VerifyJWTToken
         } catch (TokenInvalidException $e) {
             return $this->responseErrorWithData(['token' => 'Invalid token']);;
         } catch (Exception) {
-            return $this->responseErrorWithData(['token' => 'Not found']);
+            return $this->responseErrorWithData(['token' => 'Somethings is wrong']);
         }
     }
 }
