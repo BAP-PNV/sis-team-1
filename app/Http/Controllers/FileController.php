@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\FileResource;
 use App\Services\Implements\AwsS3Service;
 use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
@@ -17,14 +18,12 @@ class FileController extends Controller
         $this->awsS3 = $awsS3;
     }
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $files = collect(FileResource::collection($this
+            ->awsS3
+            ->index($request->user_id, $request->id)));
+        return $this->responseSuccessWithData($files->toArray());;
     }
 
     /**
@@ -46,7 +45,9 @@ class FileController extends Controller
                 ], 201);
             }
 
-            return $this->responseErrorWithData(["Storage" => "not enough storage space"]);
+            return $this->responseErrorWithData(
+                ["storage" => "not enough storage space"]
+            );
         }
 
         return $this->responseErrorWithData(["image" => "Not found"]);;
