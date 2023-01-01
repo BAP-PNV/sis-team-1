@@ -2,7 +2,7 @@
 
 namespace App\Services\Implements;
 
-use App\Constants\App;
+use App\Constants\AppConstant;
 use App\Repositories\Image\IImageRepository;
 use App\Repositories\User\IUserRepository;
 use App\Services\Interfaces\IAwsService;
@@ -34,7 +34,7 @@ class AwsS3Service implements IAwsService
     {
         $username = $this->userRepository->find($idUser)->username . "/";
 
-        if (App::STORAGE > (checkStorage($idUser) + convertBtoMB($file->getSize()))) 
+        if (AppConstant::STORAGE > (checkStorage($idUser) + convertBtoMB($file->getSize()))) 
         {
             $fileName = time() . '-' . $file->getClientOriginalName();
             Storage::disk('s3')
@@ -43,7 +43,7 @@ class AwsS3Service implements IAwsService
             return $path;
         }
 
-        return App::RETURN_FALSE;
+        return AppConstant::RETURN_FALSE;
     }
 
     public function show(string $url)
