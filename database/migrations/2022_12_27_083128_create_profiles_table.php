@@ -23,7 +23,6 @@ return new class extends Migration
                 ->onDelete('cascade');
             $table->string('full_name');
             $table->string('avatar_url');
-            $table->string('secret_access_key');
             $table->timestamps();
         });
     }
