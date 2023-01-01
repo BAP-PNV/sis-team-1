@@ -4,6 +4,7 @@ namespace App\Services\Implements;
 
 use App\Constants\App;
 use App\Repositories\Image\IImageRepository;
+use App\Repositories\User\IUserRepository;
 use App\Services\Interfaces\IAwsService;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -11,29 +12,35 @@ use Illuminate\Support\Facades\Storage;
 
 class AwsS3Service implements IAwsService
 {
-    private string $id = 'user_01/';
 
     private IImageRepository $imageRepository;
+    private IUserRepository $userRepository;
 
-    public function __construct(IImageRepository $ImageRepository)
+    public function __construct(
+            IImageRepository $ImageRepository,
+            IUserRepository $userRepository
+        )
     {
         $this->imageRepository = $ImageRepository;
+        $this->userRepository = $userRepository;
     }
 
-    public function index(int $userId,int $folderId)
+    public function index(int $userId, int $folderId)
     {
-        return $this->imageRepository->index($userId,$folderId);
+        return $this->imageRepository->index($userId, $folderId);
     }
 
-    public function create(UploadedFile $file,int $idUser)
+    public function create(UploadedFile $file, int $idUser)
     {
-        if (App::STORAGE > (checkStorage($idUser) + convertBtoMB($file->getSize()))) {
+        $username = $this->userRepository->find($idUser)->username . "/";
 
+        if (App::STORAGE > (checkStorage($idUser) + convertBtoMB($file->getSize()))) 
+        {
             $fileName = time() . '-' . $file->getClientOriginalName();
-            $path =  Storage::disk('s3')->put('laravel/' . $this->id . $fileName, file_get_contents($file));
-            $path = $this->show('laravel/' . $this->id . $fileName);
+            Storage::disk('s3')
+            ->put('laravel/' . $username . $fileName, file_get_contents($file));
+            $path = $this->show('laravel/' . $username . $fileName);
             return $path;
-
         }
 
         return -1;
