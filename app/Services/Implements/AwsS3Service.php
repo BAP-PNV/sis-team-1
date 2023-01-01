@@ -43,7 +43,7 @@ class AwsS3Service implements IAwsService
             return $path;
         }
 
-        return -1;
+        return App::RETURN_FALSE;
     }
 
     public function show(string $url)

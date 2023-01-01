@@ -15,7 +15,7 @@ class FileResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'url' => $this->url,
+            'url' => config('constants.s3_url_top') . $this->url,
             'size' => $this->size
         ];
     }
