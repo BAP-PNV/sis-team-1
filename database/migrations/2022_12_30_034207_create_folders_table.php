@@ -14,11 +14,10 @@ return new class extends Migration
     public function up()
     {
         Schema::create('folders', function (Blueprint $table) {
-            $table->unsignedInteger('id');
+            $table->increments('id');
             $table->unsignedInteger('user_id');
             $table->unsignedInteger('upper_folder_id')->nullable();
             $table->string('name'); 
-            $table->primary(['id','user_id']);
             $table->unique(array('upper_folder_id','user_id','name'));
             $table->foreign('user_id')
                 ->references('id')->on('users')
