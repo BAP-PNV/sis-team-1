@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\FileResource;
 use App\Services\Implements\AwsS3Service;
 use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
@@ -17,14 +18,12 @@ class FileController extends Controller
         $this->awsS3 = $awsS3;
     }
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $files = collect(FileResource::collection($this
+            ->awsS3
+            ->index($request->user_id, $request->id)));
+        return $this->responseSuccessWithData($files->toArray());;
     }
 
     /**
@@ -46,7 +45,9 @@ class FileController extends Controller
                 ], 201);
             }
 
-            return $this->responseErrorWithData(["Storage" => "not enough storage space"]);
+            return $this->responseErrorWithData(
+                ["storage" => "not enough storage space"]
+            );
         }
 
         return $this->responseErrorWithData(["image" => "Not found"]);;
@@ -110,5 +111,36 @@ class FileController extends Controller
             return $status;
         }
         return 0;
+    }
+    public function destroyFolder(Request $request)
+    {
+        $folderName = $request->get('folderName');
+        $status = $this->awsS3->deleteFolder($folderName);
+        if ($status) {
+            return $this->responseSuccess(200);
+        }
+        return $this->responseErrorWithData(['folder' => 'Not exist'], 401);
+    }
+    public function createFolder(Request $request)
+    {
+        if ($request->has('folderName')) {
+            $folderName = $request->input('folderName');
+            $path = $this->awsS3->createFolder($folderName);
+            if ($path) {
+                return $this->responseSuccessWithData(['folder' => $path], 201);
+            } else {
+                return $this->responseErrorWithData(['folder' => 'folder existed'], 400);
+            }
+        }
+        return $this->responseErrorWithData(['param' => 'Not found'], 401);
+    }
+    public function showFolder(Request $request)
+    {
+        $path = $this->awsS3->showFolder('$folderName');
+        if ($path) {
+            return $this->responseSuccessWithData(['folders' => $path], 201);
+        } else {
+            return $this->responseErrorWithData(['folder' => 'Not exist'], 401);
+        }
     }
 }
