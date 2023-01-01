@@ -2,15 +2,18 @@
 
 namespace App\Http\Middleware;
 
+use App\Traits\ApiResponse;
 use Closure;
 use Exception;
-use JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
-use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
+use Tymon\JWTAuth\Exceptions\TokenInvalidException;
+use Tymon\JWTAuth\Facades\JWTAuth;
+use Tymon\JWTAuth\Facades\JWTFactory;
 use Illuminate\Http\Request;
 
 class VerifyJWTToken
 {
+    use ApiResponse;
     /**
      * Handle an incoming request.
      *
@@ -21,20 +24,13 @@ class VerifyJWTToken
     public function handle(Request $request, Closure $next)
     {
         try {
-            $user = JWTAuth::toUser(JWTAuth::getToken());
-        } 
-        catch (Exception $e){
-            return response()->json(['error'=>'token_invalid']);
-        }catch (JWTException $e) {
-            if($e instanceof \Tymon\JWTAuth\Exceptions\TokenExpiredException) {
-                return response()->json(['token_expired'], $e->getStatusCode());
-            }else if ($e instanceof \Tymon\JWTAuth\Exceptions\TokenInvalidException) {
-                return response()->json(['token_invalid'], $e->getStatusCode());
-            }else{
-                return response()->json(['error'=>'Token is required']);
-            }
+            $token = JWTAuth::getToken();
+            $apy = JWTAuth::getPayload($token)->toArray();
+            return $next($request->merge(['apy' => $apy]));
+        } catch (TokenInvalidException $e) {
+            return $this->responseErrorWithData(['token' => 'Invalid token']);;
+        } catch (Exception) {
+            return $this->responseErrorWithData(['token' => 'Not found']);
         }
-      
-        return $next($request);
     }
 }

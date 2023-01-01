@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Key;
 
+use App\Constants\App;
 use App\Repositories\Eloquent\BaseRepository;
 
 class KeyRepository extends BaseRepository implements IKeyRepository
@@ -14,13 +15,12 @@ class KeyRepository extends BaseRepository implements IKeyRepository
 
     public function hasKey(string $string)
     {
-        $User = $this->model->where('secret_access_key', '=', $string)->first();
-        
-        if (is_null($User)) {
-            return -1;
+        $Key = $this->model->where('secret_access_key', '=', $string)->first();
+
+        if (is_null($Key)) {
+            return App::RETURN_FALSE;
         }
 
-        return $User->id;
+        return $Key->user_id;
     }
-
 }
