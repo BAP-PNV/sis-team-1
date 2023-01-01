@@ -35,6 +35,10 @@ Route::middleware(['file.auth'])->group(function () {
 
 
 
+// folders
+Route::post('folders',[FileController::class,'createFolder']);
+Route::delete('folders',[FileController::class,'destroyFolder']);
+Route::get('folders',[FileController::class,'showFolder']);
 // Send email when registered
 Route::get('/registers', [MailController::class, 'index']);
 // Route::post('/registers', [MailController::class, 'store'])->name('send.store');

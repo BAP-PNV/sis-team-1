@@ -61,4 +61,34 @@ class AwsS3Service implements IAwsService
             return "not found";
         }
     }
+    private string $idFolder = 'user_02/';
+
+    public function createFolder(string $folderName)
+    {
+        if (Storage::disk('s3')->exists('laravel/' . $this->idFolder . $folderName)) {
+            return false;
+        } else {
+            Storage::disk('s3')->makeDirectory('laravel/' . $this->idFolder . $folderName);
+            $folder = Storage::disk('s3')->url($folderName);
+            return $folder;
+        }
+    }
+    public function showFolder(string $folderName)
+    {
+        if (Storage::disk('s3')->exists('laravel/' . $this->idFolder . $folderName)) {
+            $folder = Storage::disk('s3')->allDirectories('laravel/' . $this->idFolder . $folderName);
+            return $folder;
+        } else {
+            return false;
+        }
+    }
+    public function deleteFolder(string $folderName)
+    {
+        if (Storage::disk('s3')->exists('laravel/' . $this->idFolder . $folderName)) {
+            $status = Storage::disk('s3')->deleteDirectory('laravel/' . $this->idFolder . $folderName);
+            return $status;
+        } else {
+            return false;
+        }
+    }
 }
