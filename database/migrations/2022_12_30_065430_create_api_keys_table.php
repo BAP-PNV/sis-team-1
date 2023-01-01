@@ -15,12 +15,12 @@ return new class extends Migration
     {
         Schema::create('api_keys', function (Blueprint $table) {
             $table->id();
-            $table->unsignedInteger('user_id');
+            $table->unsignedInteger('user_id')->unique();
             $table->foreign('user_id')
                 ->references('id')->on('users')
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
-            $table->string('secret_access_key');
+            $table->string('secret_access_key')->unique();
             $table->timestamps();
         });
     }
