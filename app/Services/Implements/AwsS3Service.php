@@ -17,10 +17,9 @@ class AwsS3Service implements IAwsService
     private IUserRepository $userRepository;
 
     public function __construct(
-            IImageRepository $ImageRepository,
-            IUserRepository $userRepository
-        )
-    {
+        IImageRepository $ImageRepository,
+        IUserRepository $userRepository
+    ) {
         $this->imageRepository = $ImageRepository;
         $this->userRepository = $userRepository;
     }
@@ -38,7 +37,7 @@ class AwsS3Service implements IAwsService
         {
             $fileName = time() . '-' . $file->getClientOriginalName();
             Storage::disk('s3')
-            ->put('laravel/' . $username . $fileName, file_get_contents($file));
+                ->put('laravel/' . $username . $fileName, file_get_contents($file));
             $path = $this->show('laravel/' . $username . $fileName);
             return $path;
         }
@@ -65,14 +64,15 @@ class AwsS3Service implements IAwsService
 
     public function createFolder(string $folderName)
     {
-        if (Storage::disk('s3')->exists('laravel/' . $this->idFolder . $folderName)) {
+        if (Storage::disk('s3')->exists('laravel/' . $folderName)) {
             return false;
         } else {
-            Storage::disk('s3')->makeDirectory('laravel/' . $this->idFolder . $folderName);
+            Storage::disk('s3')->makeDirectory('laravel/'  . $folderName);
             $folder = Storage::disk('s3')->url($folderName);
             return $folder;
         }
     }
+
     public function showFolder(string $folderName)
     {
         if (Storage::disk('s3')->exists('laravel/' . $this->idFolder . $folderName)) {
@@ -82,6 +82,7 @@ class AwsS3Service implements IAwsService
             return false;
         }
     }
+
     public function deleteFolder(string $folderName)
     {
         if (Storage::disk('s3')->exists('laravel/' . $this->idFolder . $folderName)) {

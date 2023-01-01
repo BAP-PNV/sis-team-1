@@ -9,6 +9,7 @@ use App\Repositories\User\IUserRepository;
 use App\Services\Interfaces\IAuthService;
 use App\Traits\ApiResponse;
 use App\Repositories\Folder\IFolderRepository;
+use App\Services\Interfaces\IAwsService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -23,15 +24,18 @@ class AuthService implements IAuthService
     private IUserRepository $UserRepository;
     private IKeyRepository $keyRepository;
     private IFolderRepository $folderRepository;
+    private IAwsService $iAWsService;
 
     public function __construct(
         IUserRepository $UserRepository,
         IKeyRepository $keyRepository,
-        IFolderRepository $folderRepository
+        IFolderRepository $folderRepository,
+        IAwsService $iAWsService
     ) {
         $this->UserRepository = $UserRepository;
         $this->keyRepository = $keyRepository;
         $this->folderRepository = $folderRepository;
+        $this->iAWsService = $iAWsService;
     }
 
     public function register(array $data)
@@ -51,6 +55,7 @@ class AuthService implements IAuthService
         ];
 
         DB::beginTransaction();
+
         try {
             $user = $this->UserRepository->create($userInfo);
 
@@ -63,13 +68,13 @@ class AuthService implements IAuthService
                 'upper_folder_id' => AppConstant::ROOT_FOLDER_ID,
                 'name' => $user->username
             ];
-
-            $this->folderRepository->create($folder);
+            
+            $this->folderRepository->createFolder($folder, $this->iAWsService);
             $this->keyRepository->create($key);
 
             DB::commit();
             return true;
-        } catch (\Exception) {
+        } catch (\Exception $e) {
             DB::rollBack();
             return false;
         }
