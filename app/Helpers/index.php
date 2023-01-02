@@ -23,18 +23,25 @@ if (!function_exists('reversPath')) {
     {
         $path = "";
 
-        while ($upperFolder > 1) {
-            $folder = $iFolderRepository->find($upperFolder);
-            $path .= $folder->name . '/';
-            $upperFolder = $folder->upper_folder_id;
-        }
+        if ($upperFolder != 1) {
 
-        $reversed = array_reverse(explode('/', $path));
-        $path = "";
+            while ($upperFolder > 1) {
 
-        // Start at 2 to remove user folder
-        for ($i = 2; $i < sizeof($reversed); $i++) {
-            $path .= $reversed[$i] . '/';
+                $folder = $iFolderRepository->find($upperFolder);
+                $path .= $folder->name . '/';
+                $upperFolder = $folder->upper_folder_id;
+
+            }
+
+            $reversed = array_reverse(explode('/', $path));
+            $path = "";
+
+            // Start at 2 to remove user folder
+            
+            for ($i = 1; $i < sizeof($reversed); $i++) {
+                $path .= $reversed[$i] . '/';
+            }
+
         }
         return $path;
     }

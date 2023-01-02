@@ -68,8 +68,8 @@ class AuthService implements IAuthService
                 'upper_folder_id' => AppConstant::ROOT_FOLDER_ID,
                 'name' => $user->username
             ];
-            
-            $this->folderRepository->createFolder($folder, $this->iAWsService);
+
+            $this->folderRepository->createFolder($folder, $this->iAWsService, AppConstant::ROOT_FOLDER_ID);
             $this->keyRepository->create($key);
 
             DB::commit();
