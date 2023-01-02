@@ -66,25 +66,38 @@ class AwsS3Service implements IAwsService
 
     public function createFolder(string $folderName, int $userId, int $upperFolder)
     {
+        if (
+            $upperFolder != AppConstant::ROOT_FOLDER_ID &&
+            !$this->folderRepository->isUserOwesFolder($userId, $upperFolder)
+        ) {
+            return [
+                'folder' => 'Your key is wrong'
+            ];
+        }
+
         $path = reversPath($upperFolder, $this->folderRepository);
         $url = AppConstant::ROOT_FOLDER_S3_PATH  . $path . $folderName;
 
         if (Storage::disk('s3')->exists($url)) {
             return false;
         } else {
+
             $folder = [
                 'user_id' => $userId,
                 'upper_folder_id' => $upperFolder,
                 'name' => $folderName
             ];
             DB::beginTransaction();
+
             try {
+
                 $this->folderRepository->create($folder);
                 Storage::disk('s3')->makeDirectory($url);
                 $folder = Storage::disk('s3')->url($url);
                 DB::commit();
                 return $folder;
             } catch (\Exception) {
+
                 DB::rollBack();
                 return false;
             }

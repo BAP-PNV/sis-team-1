@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Constants\AppConstant;
 use App\Http\Resources\FileResource;
 use App\Services\Implements\AwsS3Service;
 use App\Traits\ApiResponse;
@@ -129,10 +130,14 @@ class FileController extends Controller
     public function createFolder(Request $request)
     {
         if ($request->has('folderName')) {
+
             $folderName = $request->input('folderName');
             $upperFolderId = $request->id;
             $path = $this->awsS3->createFolder($folderName, $request->user_id, $upperFolderId);
-            if ($path) {
+            
+            if (is_array($path)) {
+                return $this->responseErrorWithData(['key'=> AppConstant::WRONG_KEY]);
+            } else if ($path) {
                 return $this->responseSuccessWithData(['folder' => $path], 201);
             } else {
                 return $this->responseErrorWithData(['folder' => 'folder existed'], 400);
