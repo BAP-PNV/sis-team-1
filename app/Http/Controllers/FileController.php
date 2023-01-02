@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Constants\AppConstant;
 use App\Http\Resources\FileResource;
 use App\Services\Implements\AwsS3Service;
 use App\Traits\ApiResponse;
@@ -111,5 +112,47 @@ class FileController extends Controller
             return $status;
         }
         return 0;
+    }
+
+    public function destroyFolder(Request $request)
+    {
+        if ($request->has('folderName')) {
+            $folderName = $request->get('folderName');
+            $status = $this->awsS3->deleteFolder($folderName, $request->user_id);
+            if ($status) {
+                return $this->responseSuccess(200);
+            }
+            return $this->responseErrorWithData(['folder' => 'Not exist'], 401);
+        }
+        return $this->responseErrorWithData(['folder' => 'Not found']);
+    }
+
+    public function createFolder(Request $request)
+    {
+        if ($request->has('folderName')) {
+
+            $folderName = $request->input('folderName');
+            $upperFolderId = $request->id;
+            $path = $this->awsS3->createFolder($folderName, $request->user_id, $upperFolderId);
+            
+            if (is_array($path)) {
+                return $this->responseErrorWithData(['key'=> AppConstant::WRONG_KEY]);
+            } else if ($path) {
+                return $this->responseSuccessWithData(['folder' => $path], 201);
+            } else {
+                return $this->responseErrorWithData(['folder' => 'folder existed'], 400);
+            }
+        }
+        return $this->responseErrorWithData(['param' => 'Not found'], 401);
+    }
+
+    public function showFolder(Request $request)
+    {
+        $path = $this->awsS3->showFolder('$folderName');
+        if ($path) {
+            return $this->responseSuccessWithData(['folders' => $path], 201);
+        } else {
+            return $this->responseErrorWithData(['folder' => 'Not exist'], 401);
+        }
     }
 }

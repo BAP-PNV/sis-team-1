@@ -20,21 +20,37 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get("/", [AuthController::class, "getLogin"]);
 Route::post('register', [AuthController::class, "register"]);
-Route::post('login', [AuthController::class, "login"]);
-Route::get('/user-info', [AuthController::class, "getUserInfo"]);
-Route::get("/get-info", [AuthController::class, "confirm"]);
+Route::match(['POST', 'GET'], 'login', [AuthController::class, "login"])->name('login');
 Route::get("/confirm", [AuthController::class, "confirm"])->middleware('jwt.auth.middleware');
 
 Route::middleware(['file.auth'])->group(function () {
+
     Route::get('files/{id}', [FileController::class, 'index']);
     Route::post('file', [FileController::class, 'create']);
     Route::delete('file/{id}', [FileController::class, 'destroy']);
+
+    Route::post('folder/{id}', [FileController::class, 'createFolder']);
+    Route::delete('folders', [FileController::class, 'destroyFolder']);
+    Route::get('folders', [FileController::class, 'showFolder']);
 });
 
+Route::group(
+    [
+        'middleware' => 'auth',
+        'prefix' => 'dashboard'
+    ],
+    function () {
 
+        Route::get("/me", [AuthController::class, "me"]);
+        Route::get('files/{id}', [FileController::class, 'index']);
+        Route::post('file', [FileController::class, 'create']);
+        Route::delete('file/{id}', [FileController::class, 'destroy']);
 
-// Send email when registered
-Route::get('/registers', [MailController::class, 'index']);
-// Route::post('/registers', [MailController::class, 'store'])->name('send.store');
+        Route::post('folders', [FileController::class, 'createFolder']);
+        Route::delete('folders', [FileController::class, 'destroyFolder']);
+        Route::get('folders', [FileController::class, 'showFolder']);
+    }
+);
+
+// Route::get('/registers', [MailController::class, 'index']);

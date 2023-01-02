@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\SignUpRequest;
-use App\Models\User;
 use Illuminate\Http\Request;
 use App\Services\Implements\AuthService;
 use App\Traits\ApiResponse;
@@ -34,7 +33,7 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'email' => 'required|email',
+            'email' => 'required',
             'password' => 'required|min:8',
         ]);
 
@@ -42,16 +41,18 @@ class AuthController extends Controller
             return response()->json($validator->errors(), 422);
         }
 
-        if (!$token = auth()->attempt($validator->validated())) {
-            return response()->json(['error' => 'Unauthorized'], 401);
-        }
+        // Handle user login by email or username
+        $token = auth()->attempt($validator->validated()) ?: auth()->attempt([
+            'username' => $validator->validated()['email'],
+            'password' => $validator->validated()['password']
+        ]);
 
-        // return $this->createNewToken($token);
-        // return redirect('/');
+        if (!$token) {
+            return $this->responseErrorUnauthorized();
+        }
+        return $this->respondWithToken($token);
     }
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-    ];
+
     /**
      * confirm
      *
@@ -96,8 +97,8 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function userProfile()
+    public function me()
     {
-        return response()->json(auth()->user());
+        return $this->responseSuccessWithData(['data' => auth()->user()]);;
     }
 }
