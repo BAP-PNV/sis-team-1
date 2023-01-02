@@ -18,7 +18,7 @@ class AwsS3Service implements IAwsService
 
     public function __construct(
         IImageRepository $ImageRepository,
-        IUserRepository $userRepository
+        IUserRepository $userRepository,
     ) {
         $this->imageRepository = $ImageRepository;
         $this->userRepository = $userRepository;
@@ -33,8 +33,7 @@ class AwsS3Service implements IAwsService
     {
         $username = $this->userRepository->find($idUser)->username . "/";
 
-        if (AppConstant::STORAGE > (checkStorage($idUser) + convertBtoMB($file->getSize()))) 
-        {
+        if (AppConstant::STORAGE > (checkStorage($idUser) + convertBtoMB($file->getSize()))) {
             $fileName = time() . '-' . $file->getClientOriginalName();
             Storage::disk('s3')
                 ->put(AppConstant::ROOT_FOLDER_S3_PATH . $username . $fileName, file_get_contents($file));
@@ -60,15 +59,16 @@ class AwsS3Service implements IAwsService
             return "not found";
         }
     }
-    private string $idFolder = 'user_02/';
 
-    public function createFolder(string $folderName)
+    public function createFolder(string $folderName, int $userId)
     {
-        if (Storage::disk('s3')->exists(AppConstant::ROOT_FOLDER_S3_PATH . $folderName)) {
+        $username = $this->userRepository->find($userId)->username . "/";
+        $url = AppConstant::ROOT_FOLDER_S3_PATH . $username . $folderName;
+        if (Storage::disk('s3')->exists($url)) {
             return false;
         } else {
-            Storage::disk('s3')->makeDirectory(AppConstant::ROOT_FOLDER_S3_PATH  . $folderName);
-            $folder = Storage::disk('s3')->url($folderName);
+            Storage::disk('s3')->makeDirectory($url);
+            $folder = Storage::disk('s3')->url($url);
             return $folder;
         }
     }
@@ -83,10 +83,12 @@ class AwsS3Service implements IAwsService
         }
     }
 
-    public function deleteFolder(string $folderName)
+    public function deleteFolder(string $folderName, int $userId)
     {
-        if (Storage::disk('s3')->exists(AppConstant::ROOT_FOLDER_S3_PATH . $this->idFolder . $folderName)) {
-            $status = Storage::disk('s3')->deleteDirectory(AppConstant::ROOT_FOLDER_S3_PATH . $this->idFolder . $folderName);
+        $username = $this->userRepository->find($userId)->username . "/";
+        $url = AppConstant::ROOT_FOLDER_S3_PATH . $username . $folderName;
+        if (Storage::disk('s3')->exists($url)) {
+            $status = Storage::disk('s3')->deleteDirectory($url);
             return $status;
         } else {
             return false;

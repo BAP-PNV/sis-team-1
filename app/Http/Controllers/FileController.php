@@ -112,20 +112,25 @@ class FileController extends Controller
         }
         return 0;
     }
+
     public function destroyFolder(Request $request)
     {
-        $folderName = $request->get('folderName');
-        $status = $this->awsS3->deleteFolder($folderName);
-        if ($status) {
-            return $this->responseSuccess(200);
+        if ($request->has('folderName')) {
+            $folderName = $request->get('folderName');
+            $status = $this->awsS3->deleteFolder($folderName, $request->user_id);
+            if ($status) {
+                return $this->responseSuccess(200);
+            }
+            return $this->responseErrorWithData(['folder' => 'Not exist'], 401);
         }
-        return $this->responseErrorWithData(['folder' => 'Not exist'], 401);
+        return $this->responseErrorWithData(['folder' => 'Not found']);
     }
+
     public function createFolder(Request $request)
     {
         if ($request->has('folderName')) {
             $folderName = $request->input('folderName');
-            $path = $this->awsS3->createFolder($folderName);
+            $path = $this->awsS3->createFolder($folderName, $request->user_id);
             if ($path) {
                 return $this->responseSuccessWithData(['folder' => $path], 201);
             } else {
@@ -134,6 +139,7 @@ class FileController extends Controller
         }
         return $this->responseErrorWithData(['param' => 'Not found'], 401);
     }
+
     public function showFolder(Request $request)
     {
         $path = $this->awsS3->showFolder('$folderName');

@@ -16,7 +16,7 @@ class FolderRepository extends BaseRepository implements IFolderRepository
         $attributes = [],
         IAwsService $iAwsService
     ) {
-        $iAwsService->createFolder($attributes['name']);
+        $iAwsService->createFolder($attributes['name'], $attributes['user_id']);
         $this->model->create($attributes);
     }
 }

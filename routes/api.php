@@ -24,23 +24,33 @@ Route::post('register', [AuthController::class, "register"]);
 Route::match(['POST', 'GET'], 'login', [AuthController::class, "login"])->name('login');
 Route::get("/confirm", [AuthController::class, "confirm"])->middleware('jwt.auth.middleware');
 
-Route::middleware(['file.auth'])->group(actionUser());
-Route::middleware('auth')->group(function () {
-    Route::get("/me", [AuthController::class, "me"]);
-    actionUser();
-});
+Route::middleware(['file.auth'])->group(function () {
 
-function actionUser()
-{
     Route::get('files/{id}', [FileController::class, 'index']);
     Route::post('file', [FileController::class, 'create']);
     Route::delete('file/{id}', [FileController::class, 'destroy']);
-    
+
     Route::post('folders', [FileController::class, 'createFolder']);
     Route::delete('folders', [FileController::class, 'destroyFolder']);
     Route::get('folders', [FileController::class, 'showFolder']);
-}
+});
+
+Route::group(
+    [
+        'middleware' => 'auth',
+        'prefix' => 'dashboard'
+    ],
+    function () {
+
+        Route::get("/me", [AuthController::class, "me"]);
+        Route::get('files/{id}', [FileController::class, 'index']);
+        Route::post('file', [FileController::class, 'create']);
+        Route::delete('file/{id}', [FileController::class, 'destroy']);
+
+        Route::post('folders', [FileController::class, 'createFolder']);
+        Route::delete('folders', [FileController::class, 'destroyFolder']);
+        Route::get('folders', [FileController::class, 'showFolder']);
+    }
+);
 
 // Route::get('/registers', [MailController::class, 'index']);
-
-
