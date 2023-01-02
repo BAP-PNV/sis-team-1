@@ -30,7 +30,7 @@ Route::middleware(['file.auth'])->group(function () {
     Route::post('file', [FileController::class, 'create']);
     Route::delete('file/{id}', [FileController::class, 'destroy']);
 
-    Route::post('folders', [FileController::class, 'createFolder']);
+    Route::post('folder/{id}', [FileController::class, 'createFolder']);
     Route::delete('folders', [FileController::class, 'destroyFolder']);
     Route::get('folders', [FileController::class, 'showFolder']);
 });

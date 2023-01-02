@@ -130,7 +130,8 @@ class FileController extends Controller
     {
         if ($request->has('folderName')) {
             $folderName = $request->input('folderName');
-            $path = $this->awsS3->createFolder($folderName, $request->user_id);
+            $upperFolderId = $request->id;
+            $path = $this->awsS3->createFolder($folderName, $request->user_id, $upperFolderId);
             if ($path) {
                 return $this->responseSuccessWithData(['folder' => $path], 201);
             } else {

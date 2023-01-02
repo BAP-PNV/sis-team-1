@@ -3,25 +3,29 @@
 namespace App\Services\Implements;
 
 use App\Constants\AppConstant;
+use App\Repositories\Folder\IFolderRepository;
 use App\Repositories\Image\IImageRepository;
 use App\Repositories\User\IUserRepository;
 use App\Services\Interfaces\IAwsService;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
-
+use Illuminate\Support\Facades\DB;
 
 class AwsS3Service implements IAwsService
 {
 
     private IImageRepository $imageRepository;
     private IUserRepository $userRepository;
+    private IFolderRepository $folderRepository;
 
     public function __construct(
         IImageRepository $ImageRepository,
         IUserRepository $userRepository,
+        IFolderRepository $folderRepository
     ) {
         $this->imageRepository = $ImageRepository;
         $this->userRepository = $userRepository;
+        $this->folderRepository = $folderRepository;
     }
 
     public function index(int $userId, int $folderId)
@@ -60,16 +64,30 @@ class AwsS3Service implements IAwsService
         }
     }
 
-    public function createFolder(string $folderName, int $userId)
+    public function createFolder(string $folderName, int $userId, int $upperFolder)
     {
         $username = $this->userRepository->find($userId)->username . "/";
-        $url = AppConstant::ROOT_FOLDER_S3_PATH . $username . $folderName;
+        $path = reversPath($upperFolder, $this->folderRepository);
+        $url = AppConstant::ROOT_FOLDER_S3_PATH . $username . $path . $folderName;
         if (Storage::disk('s3')->exists($url)) {
             return false;
         } else {
-            Storage::disk('s3')->makeDirectory($url);
-            $folder = Storage::disk('s3')->url($url);
-            return $folder;
+            $folder = [
+                'user_id' => $userId,
+                'upper_folder_id' => $upperFolder,
+                'name' => $folderName
+            ];
+            DB::beginTransaction();
+            try {
+                $this->folderRepository->create($folder);
+                Storage::disk('s3')->makeDirectory($url);
+                $folder = Storage::disk('s3')->url($url);
+                DB::commit();
+                return $folder;
+            } catch (\Exception) {
+                DB::rollBack();
+                return false;
+            }
         }
     }
 
@@ -86,6 +104,7 @@ class AwsS3Service implements IAwsService
     public function deleteFolder(string $folderName, int $userId)
     {
         $username = $this->userRepository->find($userId)->username . "/";
+
         $url = AppConstant::ROOT_FOLDER_S3_PATH . $username . $folderName;
         if (Storage::disk('s3')->exists($url)) {
             $status = Storage::disk('s3')->deleteDirectory($url);
