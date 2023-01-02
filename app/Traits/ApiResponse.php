@@ -32,6 +32,15 @@ trait ApiResponse
     }
     public function responseErrorUnauthorized(int $status = 401)
     {
-        return $this->response([],"Unauthorized",$status);
+        return $this->response([], "Unauthorized", $status);
+    }
+    protected function respondWithToken($token)
+    {
+        $data = [
+            'token' => $token,
+            'type' => 'bearer',
+            'expires_in' => auth()->factory()->getTTL() * 60
+        ];
+        return $this->response($data, 'success', 200);
     }
 };
