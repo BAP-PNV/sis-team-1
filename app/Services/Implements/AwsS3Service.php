@@ -66,9 +66,9 @@ class AwsS3Service implements IAwsService
 
     public function createFolder(string $folderName, int $userId, int $upperFolder)
     {
-        $username = $this->userRepository->find($userId)->username . "/";
         $path = reversPath($upperFolder, $this->folderRepository);
-        $url = AppConstant::ROOT_FOLDER_S3_PATH . $username . $path . $folderName;
+        $url = AppConstant::ROOT_FOLDER_S3_PATH  . $path . $folderName;
+
         if (Storage::disk('s3')->exists($url)) {
             return false;
         } else {
@@ -93,8 +93,8 @@ class AwsS3Service implements IAwsService
 
     public function showFolder(string $folderName)
     {
-        if (Storage::disk('s3')->exists(AppConstant::ROOT_FOLDER_S3_PATH . $this->idFolder . $folderName)) {
-            $folder = Storage::disk('s3')->allDirectories(AppConstant::ROOT_FOLDER_S3_PATH . $this->idFolder . $folderName);
+        if (Storage::disk('s3')->exists(AppConstant::ROOT_FOLDER_S3_PATH  . $folderName)) {
+            $folder = Storage::disk('s3')->allDirectories(AppConstant::ROOT_FOLDER_S3_PATH  . $folderName);
             return $folder;
         } else {
             return false;
