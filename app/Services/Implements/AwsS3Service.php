@@ -33,18 +33,34 @@ class AwsS3Service implements IAwsService
         return $this->imageRepository->index($userId, $folderId);
     }
 
-    public function create(UploadedFile $file, int $idUser)
+    public function create(UploadedFile $file, int $idUser, int $upperFolder)
     {
-        $username = $this->userRepository->find($idUser)->username . "/";
+        $size = convertBtoMB($file->getSize());
+        if (AppConstant::STORAGE > (checkStorage($idUser) + $size)) {
 
-        if (AppConstant::STORAGE > (checkStorage($idUser) + convertBtoMB($file->getSize()))) {
+            $upperPath = reversPath($upperFolder, $this->folderRepository);
             $fileName = time() . '-' . $file->getClientOriginalName();
-            Storage::disk('s3')
-                ->put(AppConstant::ROOT_FOLDER_S3_PATH . $username . $fileName, file_get_contents($file));
-            $path = $this->show(AppConstant::ROOT_FOLDER_S3_PATH . $username . $fileName);
-            return $path;
-        }
+            $url = AppConstant::ROOT_FOLDER_S3_PATH . $upperPath . $fileName;
+            $image = [
+                'user_id' => $idUser,
+                'folder_id' => $upperFolder,
+                'url' => $url,
+                'size' => $size
+            ];
 
+            DB::beginTransaction();
+
+            try {
+
+                $this->imageRepository->create($image);
+                Storage::disk('s3')->put($url, file_get_contents($file));
+                DB::commit();
+                return  $this->show($url);
+            } catch (\Exception) {
+                DB::rollBack();
+                return AppConstant::RETURN_FALSE;
+            }
+        }
         return AppConstant::RETURN_FALSE;
     }
 
