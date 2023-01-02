@@ -27,7 +27,7 @@ Route::get("/confirm", [AuthController::class, "confirm"])->middleware('jwt.auth
 Route::middleware(['file.auth'])->group(function () {
 
     Route::get('files/{id}', [FileController::class, 'index']);
-    Route::post('file', [FileController::class, 'create']);
+    Route::post('file/{id}', [FileController::class, 'create']);
     Route::delete('file/{id}', [FileController::class, 'destroy']);
 
     Route::post('folder/{id}', [FileController::class, 'createFolder']);

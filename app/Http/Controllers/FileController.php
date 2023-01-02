@@ -7,7 +7,6 @@ use App\Http\Resources\FileResource;
 use App\Services\Implements\AwsS3Service;
 use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 
 class FileController extends Controller
 {
@@ -24,6 +23,7 @@ class FileController extends Controller
         $files = collect(FileResource::collection($this
             ->awsS3
             ->index($request->user_id, $request->id)));
+
         return $this->responseSuccessWithData($files->toArray());;
     }
 
@@ -37,13 +37,10 @@ class FileController extends Controller
         if ($request->hasFile('image')) {
 
             $file = $request->file('image');
-            $path = $this->awsS3->create($file, $request->user_id);
+            $path = $this->awsS3->create($file, $request->user_id, $request->id);
 
             if ($path != -1) {
-                return response()->json([
-                    'message' => 'success',
-                    'path' => $path
-                ], 201);
+                return $this->responseSuccessWithData(['path' => $path], 201);
             }
 
             return $this->responseErrorWithData(
@@ -52,51 +49,6 @@ class FileController extends Controller
         }
 
         return $this->responseErrorWithData(["image" => "Not found"]);;
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        return  $this->awsS3->show('laravel/user_01/1672123409-VNP_PHP_INTERN.pdf');
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
     }
 
     /**
@@ -134,9 +86,9 @@ class FileController extends Controller
             $folderName = $request->input('folderName');
             $upperFolderId = $request->id;
             $path = $this->awsS3->createFolder($folderName, $request->user_id, $upperFolderId);
-            
+
             if (is_array($path)) {
-                return $this->responseErrorWithData(['key'=> AppConstant::WRONG_KEY]);
+                return $this->responseErrorWithData(['key' => AppConstant::WRONG_KEY]);
             } else if ($path) {
                 return $this->responseSuccessWithData(['folder' => $path], 201);
             } else {
