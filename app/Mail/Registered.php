@@ -33,7 +33,7 @@ class Registered extends Mailable
     public function envelope()
     {
         return new Envelope(
-            subject: 'Registered',
+            subject: 'Successfully registered an account',
         );
     }
 
@@ -45,7 +45,7 @@ class Registered extends Mailable
     public function content()
     {
         return new Content(
-            view: 'content',
+            view: 'emails.index',
         );
     }
 
