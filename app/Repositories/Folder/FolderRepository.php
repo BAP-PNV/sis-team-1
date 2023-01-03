@@ -25,7 +25,7 @@ class FolderRepository extends BaseRepository implements IFolderRepository
     {
         $result = $this->model
             ->where('user_id', '=', $userId)
-            ->where('upper_folder_id', '=', $upperFolder)
+            ->where('id', '=', $upperFolder)
             ->first();
         if ($result) {
             return true;
