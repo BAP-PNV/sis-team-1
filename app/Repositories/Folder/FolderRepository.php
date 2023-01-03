@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Folder;
 
+use App\Constants\AppConstant;
 use App\Repositories\Eloquent\BaseRepository;
 use App\Services\Interfaces\IAwsService;
 
@@ -30,5 +31,19 @@ class FolderRepository extends BaseRepository implements IFolderRepository
             return true;
         }
         return false;
+    }
+    public function index(int $userId, int $upperFolder)
+    {
+        return $this->model
+            ->where('user_id', '=', $userId)
+            ->where('upper_folder_id', '=', $upperFolder)
+            ->get();
+    }
+    public function findUserRootFolder(int $userId)
+    {
+        return $this->model
+            ->where('user_id', '=', $userId)
+            ->where('upper_folder_id', '=', AppConstant::ROOT_FOLDER_ID)
+            ->first()->id;
     }
 }

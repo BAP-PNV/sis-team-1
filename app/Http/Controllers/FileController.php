@@ -66,6 +66,13 @@ class FileController extends Controller
         return 0;
     }
 
+
+    public function indexFolder(Request $request)
+    {
+        return $this->awsS3->indexFolder($request->user_id, $request->id ?: 1);
+    }
+
+
     public function destroyFolder(Request $request)
     {
         if ($request->has('folderName')) {
