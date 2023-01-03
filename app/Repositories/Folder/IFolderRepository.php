@@ -8,5 +8,10 @@ use App\Services\Interfaces\IAwsService;
 interface IFolderRepository extends IRepository
 {
     public function createFolder($attributes = [], IAwsService $iAwsService, int  $upperFolder);
+
     public function isUserOwesFolder(int $userId, int $upperFolder);
+
+    public function index(int $userId, int  $upperFolder);
+
+    public function findUserRootFolder(int $userId);
 }

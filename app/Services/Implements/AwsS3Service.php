@@ -80,6 +80,15 @@ class AwsS3Service implements IAwsService
         }
     }
 
+
+    public function indexFolder(int $userId, int $upperFolderId)
+    {
+        if ($upperFolderId == AppConstant::ROOT_FOLDER_ID) {
+            $upperFolderId = $this->folderRepository->findUserRootFolder($userId);
+        }
+        return $this->folderRepository->index($userId, $upperFolderId);
+    }
+
     public function createFolder(string $folderName, int $userId, int $upperFolder)
     {
         if (
