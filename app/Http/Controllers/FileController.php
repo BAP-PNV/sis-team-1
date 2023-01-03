@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Constants\AppConstant;
 use App\Http\Resources\FileResource;
+use App\Http\Resources\FolderResource;
 use App\Services\Implements\AwsS3Service;
 use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
@@ -69,7 +70,11 @@ class FileController extends Controller
 
     public function indexFolder(Request $request)
     {
-        return $this->awsS3->indexFolder($request->user_id, $request->id ?: 1);
+        $folders = collect(FolderResource::collection($this->awsS3->indexFolder($request->user_id, $request->id ?: 1)));
+        return  $this->responseSuccessWithData([
+            'parent_id' => $request->id ?: null,
+            'folders ' =>  $folders
+        ]);
     }
 
 
