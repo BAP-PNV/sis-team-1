@@ -139,22 +139,11 @@ class AwsS3Service implements IAwsService
         }
     }
 
-    public function deleteFolder(string $folderName, int $userId)
-    {
-        $username = $this->userRepository->find($userId)->username . "/";
 
-        $url = AppConstant::ROOT_FOLDER_S3_PATH . $username . $folderName;
-        if (Storage::disk('s3')->exists($url)) {
-            $status = Storage::disk('s3')->deleteDirectory($url);
-            return $status;
-        } else {
-            return false;
-        }
-    }
 
-    public function deleteFolderTest($id)
+    public function deleteFolder($id)
     {
-        $folder =  $this->folderRepository->find($id);
+        $folder = $this->folderRepository->find($id);
 
         $upperFolderId = $folder->upper_folder_id;
         $path = reversPath($upperFolderId, $this->folderRepository);
@@ -165,6 +154,11 @@ class AwsS3Service implements IAwsService
 
             $childrenArray = getChildren($folder);
 
+            // Add current folder to list children to remove all include current folder
+
+            array_unshift($childrenArray, $id);
+            Storage::disk('s3')->deleteDirectory($url);
+
             DB::beginTransaction();
 
             try {
@@ -172,16 +166,15 @@ class AwsS3Service implements IAwsService
                 foreach (array_reverse($childrenArray) as $key) {
                     $this->folderRepository->delete($key);
                 }
-                $status = Storage::disk('s3')->deleteDirectory($url);
 
                 DB::commit();
-                return $status;
+                return AppConstant::RETURN_TRUE;
             } catch (\Exception) {
                 DB::rollBack();
-                return false;
+                return AppConstant::CAN_NOT_DELETE;
             }
         } else {
-            return false;
+            return AppConstant::FOLDER_NOT_EXIST;
         }
     }
 }

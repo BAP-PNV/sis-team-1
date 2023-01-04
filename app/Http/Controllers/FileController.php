@@ -126,8 +126,16 @@ class FileController extends Controller
 
     public function deleteFolder(Request $request)
     {
-        return $this->awsS3->deleteFolderTest($request->id);
+        $responseArray = [
+            AppConstant::CAN_NOT_DELETE =>
+            $this->responseErrorWithData(['folder' => AppConstant::CAN_NOT_DELETE]),
+            AppConstant::FOLDER_NOT_EXIST =>
+            $this->responseErrorWithData(['folder' => AppConstant::FOLDER_NOT_EXIST]),
+            AppConstant::RETURN_TRUE =>
+            $this->responseSuccessWithData(['folder' => 'delete successful'])
+        ];
+
+        $response = $this->awsS3->deleteFolder($request->id);
+        return $responseArray[$response];
     }
-
-
 }
