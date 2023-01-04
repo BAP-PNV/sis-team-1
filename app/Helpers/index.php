@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Folder;
 use App\Repositories\Folder\IFolderRepository;
 use App\Repositories\Image\ImageRepository;
 
@@ -44,6 +45,7 @@ if (!function_exists('reversPath')) {
         return $path;
     }
 }
+
 if (!function_exists('getChildren')) {
     function getChildren($folder)
     {
@@ -55,5 +57,16 @@ if (!function_exists('getChildren')) {
             }
         }
         return $ids;
+    }
+}
+
+if (!function_exists('checkUserOwnedFolder')) {
+    function checkUserOwnedFolder(int $userId, int $folderId): bool
+    {
+        $folder = new Folder();;
+        if ($folder->find($folderId)->user_id == $userId) {
+            return true;
+        }
+        return false;
     }
 }
