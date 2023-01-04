@@ -9,7 +9,7 @@ interface IFolderRepository extends IRepository
 {
     public function createFolder($attributes = [], IAwsService $iAwsService, int  $upperFolder);
 
-    public function isUserOwesFolder(int $userId, int $upperFolder);
+    public function isUserOwesFolder(int $userId, int $folderId);
 
     public function index(int $userId, int  $upperFolder);
 

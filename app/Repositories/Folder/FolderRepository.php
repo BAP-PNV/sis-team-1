@@ -21,9 +21,9 @@ class FolderRepository extends BaseRepository implements IFolderRepository
         $iAwsService->createFolder($attributes['name'], $attributes['user_id'], $upperFolder);
     }
 
-    public function isUserOwesFolder(int $userId, int $upperFolder)
+    public function isUserOwesFolder(int $userId, int $folderId)
     {
-        if ($this->model->find($upperFolder)->user_id == $userId) {
+        if ($this->model->find($folderId)->user_id == $userId) {
             return true;
         }
         return false;
