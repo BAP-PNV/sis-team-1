@@ -74,6 +74,7 @@ class AuthService implements IAuthService
             $this->folderRepository->createFolder($folder, $this->iAWsService, AppConstant::ROOT_FOLDER_ID);
             $this->keyRepository->create($key);
             $user['password'] = $apy['password'];
+            $user['secret_access_key'] = $user->key->secret_access_key;
             Mail::to($user->email)->send(new AccountInfo($user));
 
             DB::commit();
