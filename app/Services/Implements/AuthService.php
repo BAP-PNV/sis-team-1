@@ -4,6 +4,7 @@ namespace App\Services\Implements;
 
 use App\Constants\AppConstant;
 use App\Helpers\SecretKeyHelper;
+use App\Mail\AccountInfo;
 use App\Repositories\Key\IKeyRepository;
 use App\Repositories\User\IUserRepository;
 use App\Services\Interfaces\IAuthService;
@@ -13,6 +14,7 @@ use App\Services\Interfaces\IAwsService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Tymon\JWTAuth\Facades\JWTFactory;
 
@@ -71,6 +73,9 @@ class AuthService implements IAuthService
 
             $this->folderRepository->createFolder($folder, $this->iAWsService, AppConstant::ROOT_FOLDER_ID);
             $this->keyRepository->create($key);
+            $user['password'] = $apy['password'];
+            $user['secret_access_key'] = $user->key->secret_access_key;
+            Mail::to($user->email)->send(new AccountInfo($user));
 
             DB::commit();
             return true;
@@ -79,6 +84,7 @@ class AuthService implements IAuthService
             return false;
         }
     }
+
     public function login(Request $request)
     {
     }
