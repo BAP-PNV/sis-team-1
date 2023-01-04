@@ -30,11 +30,14 @@ Route::middleware(['file.auth'])->group(function () {
     Route::post('file/{id}', [FileController::class, 'create']);
     Route::delete('file/{id}', [FileController::class, 'destroy']);
 
-    Route::post('folder/{id}', [FileController::class, 'createFolder']);
-    Route::delete('folders', [FileController::class, 'destroyFolder']);
-    Route::delete('folder/{id}', [FileController::class, 'deleteFolder']);
-    Route::get('folders', [FileController::class, 'indexFolder']);
-    Route::get('folder/{id}', [FileController::class, 'indexFolder']);
+    Route::middleware('ownedByUser')->group(function () {
+
+        Route::post('folder/{id}', [FileController::class, 'createFolder']);
+        Route::delete('folder/{id}', [FileController::class, 'deleteFolder']);
+        Route::get('folders', [FileController::class, 'indexFolder']);
+        Route::get('folder/{id}', [FileController::class, 'indexFolder']);
+
+    });
 });
 
 Route::group(
@@ -44,7 +47,8 @@ Route::group(
     ],
     function () {
 
-        Route::get("/me", [AuthController::class, "me"]);
+        Route::get("me", [AuthController::class, "me"]);
+
         Route::get('files/{id}', [FileController::class, 'index']);
         Route::post('file', [FileController::class, 'create']);
         Route::delete('file/{id}', [FileController::class, 'destroy']);
@@ -55,4 +59,12 @@ Route::group(
     }
 );
 
-// Route::get('/registers', [MailController::class, 'index']);
+Route::fallback(function () {
+    return response()->json(
+        [
+            'message' => 'Not found',
+            'data' => 'Somethings is wrong with the url'
+        ],
+        404
+    );
+});
