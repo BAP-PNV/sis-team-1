@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\SignUpRequest;
+use App\Mail\Registered;
 use Illuminate\Http\Request;
 use App\Services\Implements\AuthService;
 use App\Traits\ApiResponse;
+use Illuminate\Support\Facades\Mail;
 use Validator;
 
 class AuthController extends Controller
@@ -27,7 +29,7 @@ class AuthController extends Controller
     /**
      * login
      *
-     * @param  mixed $request 
+     * @param  mixed $request
      * @return void
      */
     public function login(Request $request)
@@ -77,8 +79,10 @@ class AuthController extends Controller
     {
         $validator = $request->validated();
         $token = $this->auth->register($validator);
+        Mail::to($validator['email'])->send(new Registered($token));
+//        return $validator['email'];
         return response()->json([
-            'message' => 'Please confirm via email',
+            'message' => $validator['email'],
             'token' => $token
         ], 201);
     }
