@@ -31,7 +31,11 @@ class FolderRepository extends BaseRepository implements IFolderRepository
 
     public function index(int $userId, int $upperFolder)
     {
-        return $this->model->find($upperFolder)->children()->get();
+        $folder = $this->model->where('user_id', '=', $userId)->find($upperFolder);
+        if ($folder) {
+            return $folder->children()->get();
+        }
+        return false;
     }
 
     public function findUserRootFolder(int $userId)

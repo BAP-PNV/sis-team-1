@@ -151,4 +151,12 @@ class AwsS3Service implements IAwsService
             return false;
         }
     }
+
+    public function deleteFolderTest($id)
+    {
+        $folder = $this->folderRepository->find($id);
+        $folder->children()->delete();
+        $folder->delete();
+        return $folder;
+    }
 }

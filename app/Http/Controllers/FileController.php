@@ -70,11 +70,15 @@ class FileController extends Controller
 
     public function indexFolder(Request $request)
     {
-        $folders = collect(FolderResource::collection($this->awsS3->indexFolder($request->user_id, $request->id ?: 1)));
-        return  $this->responseSuccessWithData([
-            'parent_id' => $request->id ?: null,
-            'folders ' =>  $folders
-        ]);
+        $folders = $this->awsS3->indexFolder($request->user_id, $request->id ?: 1);
+        if ($folders) {
+            $foldersArr =  collect(FolderResource::collection($folders));
+            return  $this->responseSuccessWithData([
+                'parent_id' => $request->id ?: null,
+                'folders ' =>  $foldersArr
+            ]);
+        };
+        return $this->responseErrorWithData(['permission' => 'You can not access this folder']);
     }
 
 
@@ -118,5 +122,10 @@ class FileController extends Controller
         } else {
             return $this->responseErrorWithData(['folder' => 'Not exist'], 401);
         }
+    }
+
+    public function deleteFolder(Request $request)
+    {
+        return $this->awsS3->deleteFolderTest($request->id);
     }
 }
