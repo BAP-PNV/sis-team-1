@@ -154,9 +154,34 @@ class AwsS3Service implements IAwsService
 
     public function deleteFolderTest($id)
     {
-        $folder = $this->folderRepository->find($id);
-        $folder->children()->delete();
-        $folder->delete();
-        return $folder;
+        $folder =  $this->folderRepository->find($id);
+
+        $upperFolderId = $folder->upper_folder_id;
+        $path = reversPath($upperFolderId, $this->folderRepository);
+
+        $url = AppConstant::ROOT_FOLDER_S3_PATH  . $path . $folder->name;
+
+        if (Storage::disk('s3')->exists($url)) {
+
+            $childrenArray = getChildren($folder);
+
+            DB::beginTransaction();
+
+            try {
+
+                foreach (array_reverse($childrenArray) as $key) {
+                    $this->folderRepository->delete($key);
+                }
+                $status = Storage::disk('s3')->deleteDirectory($url);
+
+                DB::commit();
+                return $status;
+            } catch (\Exception) {
+                DB::rollBack();
+                return false;
+            }
+        } else {
+            return false;
+        }
     }
 }
