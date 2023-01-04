@@ -30,19 +30,30 @@ if (!function_exists('reversPath')) {
                 $folder = $iFolderRepository->find($upperFolder);
                 $path .= $folder->name . '/';
                 $upperFolder = $folder->upper_folder_id;
-
             }
 
             $reversed = array_reverse(explode('/', $path));
             $path = "";
 
             // Start at 2 to remove user folder
-            
+
             for ($i = 1; $i < sizeof($reversed); $i++) {
                 $path .= $reversed[$i] . '/';
             }
-
         }
         return $path;
+    }
+}
+if (!function_exists('getChildren')) {
+    function getChildren($folder)
+    {
+        $ids = [];
+        if ($folder->children) {
+            foreach ($folder->children as $fol) {
+                $ids[] = $fol->id;
+                $ids = array_merge($ids, getChildren($fol));
+            }
+        }
+        return $ids;
     }
 }

@@ -23,22 +23,21 @@ class FolderRepository extends BaseRepository implements IFolderRepository
 
     public function isUserOwesFolder(int $userId, int $upperFolder)
     {
-        $result = $this->model
-            ->where('user_id', '=', $userId)
-            ->where('id', '=', $upperFolder)
-            ->first();
-        if ($result) {
+        if ($this->model->find($upperFolder)->user_id == $userId) {
             return true;
         }
         return false;
     }
+
     public function index(int $userId, int $upperFolder)
     {
-        return $this->model
-            ->where('user_id', '=', $userId)
-            ->where('upper_folder_id', '=', $upperFolder)
-            ->get();
+        $folder = $this->model->where('user_id', '=', $userId)->find($upperFolder);
+        if ($folder) {
+            return $folder->children()->get();
+        }
+        return false;
     }
+
     public function findUserRootFolder(int $userId)
     {
         return $this->model

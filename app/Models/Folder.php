@@ -13,11 +13,24 @@ class Folder extends Model
         'upper_folder_id',
         'name'
     ];
+
     public function user()
     {
         return $this->belongsTo(User::class);
     }
-    public function images(){
+
+    public function images()
+    {
         return $this->hasMany(Image::class);
+    }
+
+    public function children()
+    {
+        return $this->hasMany(Folder::class, 'upper_folder_id');
+    }
+
+    public function parent()
+    {
+        return $this->belongsTo(Folder::class, 'upper_folder_id');
     }
 }
