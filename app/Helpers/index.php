@@ -1,6 +1,8 @@
 <?php
 
+use App\Constants\AppConstant;
 use App\Models\Folder;
+use App\Models\Image;
 use App\Repositories\Folder\IFolderRepository;
 use App\Repositories\Image\ImageRepository;
 
@@ -63,7 +65,7 @@ if (!function_exists('getChildren')) {
 if (!function_exists('checkUserOwnedFolder')) {
     function checkUserOwnedFolder(int $userId, int $folderId): bool
     {
-        $folder = new Folder();;
+        $folder = new Folder();
         if ($folder->find($folderId)->user_id == $userId) {
             return true;
         }

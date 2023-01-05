@@ -65,6 +65,7 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'jwt.auth.middleware' => \App\Http\Middleware\VerifyJWTToken::class,
         'file.auth' => \App\Http\Middleware\VerifyAccountUpload::class,
-        'ownedByUser' => \App\Http\Middleware\OwnedByUser::class
+        'ownedByUser.folder' => \App\Http\Middleware\OwnedByUser::class,
+        'ownedByUser.file' => \App\Http\Middleware\OwnedByUserFile::class
     ];
 }

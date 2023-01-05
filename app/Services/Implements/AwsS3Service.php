@@ -11,6 +11,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 
+
 class AwsS3Service implements IAwsService
 {
 
@@ -28,8 +29,11 @@ class AwsS3Service implements IAwsService
         $this->folderRepository = $folderRepository;
     }
 
-    public function index(int $userId, int $folderId)
+    public function index(int $userId, ?int $folderId)
     {
+        if ($folderId == null) {
+            $folderId = $this->folderRepository->findUserRootFolder($userId);
+        }
         return $this->imageRepository->index($userId, $folderId);
     }
 
@@ -70,13 +74,28 @@ class AwsS3Service implements IAwsService
         return $file;
     }
 
-    public function delete(string $url)
+    public function delete(int $id)
     {
-        if (Storage::disk('s3')->exists($url)) {
-            $status = Storage::disk('s3')->delete($url);
-            return $status;
+        $image = $this->imageRepository->find($id);
+        if ($image != null) {
+            $url = $image->url;
+            if (Storage::disk('s3')->exists($url)) {
+
+                DB::beginTransaction();
+                try {
+
+                    Storage::disk('s3')->delete($url);
+                    $this->imageRepository->delete($id);
+                    DB::commit();
+                } catch (\Exception) {
+
+                    DB::rollBack();
+                    return false;
+                }
+                return true;
+            }
         } else {
-            return "not found";
+            return AppConstant::FILE_NOT_EXIST;
         }
     }
 

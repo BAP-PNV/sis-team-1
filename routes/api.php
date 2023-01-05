@@ -26,18 +26,25 @@ Route::get("/confirm", [AuthController::class, "confirm"])->middleware('jwt.auth
 
 Route::middleware(['file.auth'])->group(function () {
 
-    Route::get('files/{id}', [FileController::class, 'index']);
-    Route::post('file/{id}', [FileController::class, 'create']);
-    Route::delete('file/{id}', [FileController::class, 'destroy']);
-
-    Route::middleware('ownedByUser')->group(function () {
+    Route::middleware('ownedByUser.folder')->group(function () {
 
         Route::post('folder/{id}', [FileController::class, 'createFolder']);
         Route::delete('folder/{id}', [FileController::class, 'deleteFolder']);
         Route::get('folders', [FileController::class, 'indexFolder']);
         Route::get('folder/{id}', [FileController::class, 'indexFolder']);
-
     });
+
+    Route::post('file/{id}', [FileController::class, 'create']);
+    Route::get('files', [FileController::class, 'index']);
+
+    Route::middleware('ownedByUser.file')->group(
+        function () {
+            Route::post('folder/{id}/file', [FileController::class, 'create']);
+            Route::get('folder/{id}/file', [FileController::class, 'show']);
+            Route::delete('file/{id}', [FileController::class, 'destroy']);
+        }
+    );
+    
 });
 
 Route::group(
