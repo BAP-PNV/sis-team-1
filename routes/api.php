@@ -22,7 +22,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::post('register', [AuthController::class, "register"]);
 Route::match(['POST', 'GET'], 'login', [AuthController::class, "login"])->name('login');
-Route::get("/confirm", [AuthController::class, "confirm"])->middleware('jwt.auth.middleware');
+Route::get("/confirm", [AuthController::class, "confirm"])->middleware('jwt.auth.middleware')->name('confirm');
 
 Route::middleware(['file.auth'])->group(function () {
 
@@ -44,7 +44,6 @@ Route::middleware(['file.auth'])->group(function () {
             Route::delete('file/{id}', [FileController::class, 'destroy']);
         }
     );
-    
 });
 
 Route::group(

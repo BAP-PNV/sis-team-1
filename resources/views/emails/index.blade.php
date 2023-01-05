@@ -1,47 +1,49 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <title>Email Confirmation</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
+
 <body style="background-color: #e9ecef;">
 
-<div class="preheader"
-     style="display: none; max-width: 0; max-height: 0; overflow: hidden; font-size: 1px; line-height: 1px; color: #fff; opacity: 0;">
-    A preheader is the short summary text that follows the subject line when an email is viewed in the inbox.
-</div>
-<table border="0" cellpadding="0" cellspacing="0" width="100%">
-    <tr>
-        <td align="center" bgcolor="#e9ecef">
-            <table align="center" border="0" cellpadding="0" cellspacing="0" width="600">
-                <tr>
-                    <td align="center" valign="top" width="600">
-                        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
-                            <tr>
-                                <td align="center" valign="top" style="padding: 36px 24px;">
-                                    <a href="http://localhost" target="_blank" style="display: inline-block;">
-                                        <img
-                                            src="https://www.blogdesire.com/wp-content/uploads/2019/07/blogdesire-1.png"
-                                            alt="Logo" border="0" width="48"
-                                            style="display: block; width: 48px; max-width: 48px; min-width: 48px;">
-                                    </a>
-                                </td>
-                            </tr>
-                        </table>
-                    </td>
-                </tr>
-            </table>
-        </td>
-    </tr>
+    <div class="preheader"
+        style="display: none; max-width: 0; max-height: 0; overflow: hidden; font-size: 1px; line-height: 1px; color: #fff; opacity: 0;">
+        A preheader is the short summary text that follows the subject line when an email is viewed in the inbox.
+    </div>
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+        <tr>
+            <td align="center" bgcolor="#e9ecef">
+                <table align="center" border="0" cellpadding="0" cellspacing="0" width="600">
+                    <tr>
+                        <td align="center" valign="top" width="600">
+                            <table border="0" cellpadding="0" cellspacing="0" width="100%"
+                                style="max-width: 600px;">
+                                <tr>
+                                    <td align="center" valign="top" style="padding: 36px 24px;">
+                                        <a href="http://localhost" target="_blank" style="display: inline-block;">
+                                            <img src="https://www.blogdesire.com/wp-content/uploads/2019/07/blogdesire-1.png"
+                                                alt="Logo" border="0" width="48"
+                                                style="display: block; width: 48px; max-width: 48px; min-width: 48px;">
+                                        </a>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
 
-    <tr>
-        <td align="center" bgcolor="#e9ecef">
-            <table align="center" border="0" cellpadding="0" cellspacing="0" width="600">
-                <tr>
-                    <td align="center" valign="top" width="600">
-                        <![endif]-->
+        <tr>
+            <td align="center" bgcolor="#e9ecef">
+                <table align="center" border="0" cellpadding="0" cellspacing="0" width="600">
+                    <tr>
+                        <td align="center" valign="top" width="600">
+                            <![endif]-->
                         <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
                             <tr>
                                 <td align="left" bgcolor="#ffffff"
@@ -84,7 +86,7 @@
                                                     <tr>
                                                         <td align="center" bgcolor="#1a82e2"
                                                             style="border-radius: 6px;">
-                                                            <a href="{{ env('APP_FE_URL') }}?token={{$data}}"
+                                                            <a href="{{ route('confirm') }}?token={{ $data }}"
                                                                target="_blank"
                                                                style="display: inline-block; padding: 16px 36px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; color: #ffffff; text-decoration: none; border-radius: 6px;">Access</a>
                                                         </td>
