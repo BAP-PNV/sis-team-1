@@ -18,4 +18,9 @@ final class AppConstant
      */
     const FOLDER_NOT_EXIST = 'Not found the folder';
     const CAN_NOT_DELETE = 'Can not delete this folder';
+
+    /**
+     * FILE
+     */
+    const FILE_NOT_EXIST = 'Not found the file';
 }

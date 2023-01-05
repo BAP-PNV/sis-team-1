@@ -23,7 +23,7 @@ class FileController extends Controller
     {
         $files = collect(FileResource::collection($this
             ->awsS3
-            ->index($request->user_id, $request->id)));
+            ->index($request->user_id, $request->id ?: null)));
 
         return $this->responseSuccessWithData($files->toArray());;
     }
@@ -60,11 +60,15 @@ class FileController extends Controller
      */
     public function destroy($id)
     {
-        $status =  $this->awsS3->delete('laravel/user_01/' . '1672131286-VNP_PHP_INTERN.pdf');
-        if ($status) {
-            return $status;
-        }
-        return 0;
+        $responseArray = [
+            true => $this->responseSuccessWithData(['file' => 'delete successful']),
+            false => $this->responseErrorWithData(['file' => 'can not delete this file']),
+            AppConstant::FILE_NOT_EXIST => $this->responseErrorWithData(['file' => 'File not found'])
+
+        ];
+        $status = $this->awsS3->delete($id);
+        return $status;
+        // return $responseArray[$status];
     }
 
 
