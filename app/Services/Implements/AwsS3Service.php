@@ -157,15 +157,19 @@ class AwsS3Service implements IAwsService
             // Add current folder to list children to remove all include current folder
 
             array_unshift($childrenArray, $id);
-            Storage::disk('s3')->deleteDirectory($url);
+
 
             DB::beginTransaction();
 
             try {
 
                 foreach (array_reverse($childrenArray) as $key) {
-                    $this->folderRepository->delete($key);
+                    $folder =  $this->folderRepository->find($key);
+                    $folder->images()->delete();
+                    $folder->delete();
                 }
+
+                Storage::disk('s3')->deleteDirectory($url);
 
                 DB::commit();
                 return AppConstant::RETURN_TRUE;
