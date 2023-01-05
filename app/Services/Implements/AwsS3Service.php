@@ -37,16 +37,21 @@ class AwsS3Service implements IAwsService
         return $this->imageRepository->index($userId, $folderId);
     }
 
-    public function create(UploadedFile $file, int $idUser, int $upperFolder)
+    public function create(UploadedFile $file, int $userId, int $upperFolder)
     {
         $size = convertBtoMB($file->getSize());
-        if (AppConstant::STORAGE > (checkStorage($idUser) + $size)) {
+        if (AppConstant::STORAGE > (checkStorage($userId) + $size)) {
+
+            if ($upperFolder == AppConstant::ROOT_FOLDER_ID) {
+                $upperFolder =  $this->folderRepository->findUserRootFolder($userId);
+            }
 
             $upperPath = reversPath($upperFolder, $this->folderRepository);
             $fileName = time() . '-' . $file->getClientOriginalName();
+
             $url = AppConstant::ROOT_FOLDER_S3_PATH . $upperPath . $fileName;
             $image = [
-                'user_id' => $idUser,
+                'user_id' => $userId,
                 'folder_id' => $upperFolder,
                 'url' => $url,
                 'size' => $size
@@ -86,24 +91,24 @@ class AwsS3Service implements IAwsService
         }
 
         $url = $image->url;
-            if (Storage::disk('s3')->exists($url)) {
-                DB::beginTransaction();
-                try {
-                    Storage::disk('s3')->delete($url);
-                    $this->imageRepository->delete($id);
-                    DB::commit();
-                } catch (\Exception) {
-                    DB::rollBack();
-                    return [
-                        'status' => false,
-                        'msg' => 'can not delete this file'
-                    ];
-                }
+        if (Storage::disk('s3')->exists($url)) {
+            DB::beginTransaction();
+            try {
+                Storage::disk('s3')->delete($url);
+                $this->imageRepository->delete($id);
+                DB::commit();
+            } catch (\Exception) {
+                DB::rollBack();
                 return [
-                    'status' => true,
-                    'msg' => 'delete successful'
+                    'status' => false,
+                    'msg' => 'can not delete this file'
                 ];
             }
+            return [
+                'status' => true,
+                'msg' => 'delete successful'
+            ];
+        }
     }
 
 
@@ -117,55 +122,50 @@ class AwsS3Service implements IAwsService
 
     public function createFolder(string $folderName, int $userId, int $upperFolder)
     {
-        if (
-            $upperFolder != AppConstant::ROOT_FOLDER_ID &&
-            !$this->folderRepository->isUserOwesFolder($userId, $upperFolder)
-        ) {
-            return [
-                'folder' => 'Your key is wrong'
-            ];
-        }
+        if ($upperFolder == AppConstant::ROOT_FOLDER_ID || $this->folderRepository->isUserOwesFolder($userId, $upperFolder)) {
+            if ($upperFolder  == AppConstant::ROOT_FOLDER_ID) {
+                $upperFolder =  $this->folderRepository->findUserRootFolder($userId);
+            }
+            $path = reversPath($upperFolder, $this->folderRepository);
+            $url = AppConstant::ROOT_FOLDER_S3_PATH  . $path . $folderName;
 
-        $path = reversPath($upperFolder, $this->folderRepository);
-        $url = AppConstant::ROOT_FOLDER_S3_PATH  . $path . $folderName;
-
-        if (Storage::disk('s3')->exists($url)) {
-            return false;
-        } else {
-
-            $folder = [
-                'user_id' => $userId,
-                'upper_folder_id' => $upperFolder,
-                'name' => $folderName
-            ];
-            DB::beginTransaction();
-
-            try {
-
-                $this->folderRepository->create($folder);
-                Storage::disk('s3')->makeDirectory($url);
-                $folder = Storage::disk('s3')->url($url);
-                DB::commit();
-                return $folder;
-            } catch (\Exception) {
-
-                DB::rollBack();
+            if (Storage::disk('s3')->exists($url)) {
                 return false;
+            } else {
+
+                $folder = [
+                    'user_id' => $userId,
+                    'upper_folder_id' => $upperFolder,
+                    'name' => $folderName
+                ];
+                DB::beginTransaction();
+
+                try {
+
+                    $folder =  $this->folderRepository->create($folder);
+                    Storage::disk('s3')->makeDirectory($url);
+                    $folderUrl = Storage::disk('s3')->url($url);
+                    DB::commit();
+                } catch (\Exception) {
+
+                    DB::rollBack();
+                    return [
+                        'status' => false,
+                        'folder' => 'folder existed'
+                    ];
+                }
+                return [
+                    'status' => true,
+                    'path' =>  $folderUrl,
+                    'id' => $folder['id']
+                ];
             }
         }
+        return [
+            'status' => false,
+            'folder' => 'Your key is wrong'
+        ];
     }
-
-    public function showFolder(string $folderName)
-    {
-        if (Storage::disk('s3')->exists(AppConstant::ROOT_FOLDER_S3_PATH  . $folderName)) {
-            $folder = Storage::disk('s3')->allDirectories(AppConstant::ROOT_FOLDER_S3_PATH  . $folderName);
-            return $folder;
-        } else {
-            return false;
-        }
-    }
-
-
 
     public function deleteFolder($id)
     {

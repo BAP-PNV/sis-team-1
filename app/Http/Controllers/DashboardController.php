@@ -20,26 +20,34 @@ class DashboardController extends Controller
         $this->awsS3 = $awsS3;
     }
 
-    public function setModel(User $user)
-    {
-        $this->user = $user;
-    }
 
     public function index()
     {
-        $this->setModel(auth()->user());
-        $userId = $this->user->id;
+
+        $userId = auth()->user()->id;
         $files = collect(FileResource::collection($this->awsS3->index($userId, null)));
         $folders = collect(FolderResource::collection($this->awsS3->indexFolder($userId, null)));
         return $this->responseSuccessWithData([
+            "files" => $files,
+            'folders' => $folders,
+            'parent_id' =>  null,
+        ]);
+    }
+
+    public function getFileAndFolder(Request $request)
+    {
+        $userId = auth()->user()->id;
+        $files = collect(FileResource::collection($this->awsS3->index($userId, $request->id)));
+        $folders = collect(FolderResource::collection($this->awsS3->indexFolder($userId, $request->id)));
+        return $this->responseSuccessWithData([
+            'parent_id' =>  $request->id,
             "files" => $files,
             'folders' => $folders
         ]);
     }
 
-    public function me()
+    public function me(Request $request)
     {
-        return $this->responseSuccessWithData(['data' => auth()->user()->id]);;
+        return $this->responseSuccessWithData(['data' => $request->user_id]);;
     }
-
 }

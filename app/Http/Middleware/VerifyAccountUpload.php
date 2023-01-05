@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Constants\AppConstant;
 use App\Helpers\SecretKeyHelper;
 use App\Traits\ApiResponse;
 use Closure;
@@ -19,21 +20,18 @@ class VerifyAccountUpload
      */
     public function handle(Request $request, Closure $next)
     {
-        if ($request->has('access_key')) {
+        if ($request->has('access_key') || auth()->user()) {
 
-            $idUser = SecretKeyHelper::checkKey($request->get('access_key'));
+            $idUser = auth()->user()->id  ?: SecretKeyHelper::checkKey($request->get('access_key'));
 
-            if ($idUser != -1) {
-                return $next($request->merge(["user_id" => $idUser]));
+            if ($idUser == AppConstant::RETURN_FALSE) {
+                return $this->responseErrorUnauthorized();
             }
-
-            return $this->responseErrorUnauthorized();
+            return $next($request->merge(["user_id" => $idUser]));
         }
 
         return $this->responseErrorWithData([
             "detail" => "Not found key"
         ]);
-        
     }
-
 }
