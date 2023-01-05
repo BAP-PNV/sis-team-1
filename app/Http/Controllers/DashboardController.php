@@ -37,9 +37,8 @@ class DashboardController extends Controller
         ]);
     }
 
-    public function me()
+    public function me(Request $request)
     {
-        return $this->responseSuccessWithData(['data' => auth()->user()->id]);;
+        return $this->responseSuccessWithData(['data' => $request->user_id]);;
     }
-
 }

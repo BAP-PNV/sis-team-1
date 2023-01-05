@@ -38,7 +38,7 @@ class FileController extends Controller
         if ($request->hasFile('image')) {
 
             $file = $request->file('image');
-            $path = $this->awsS3->create($file, $request->user_id, $request->id);
+            $path = $this->awsS3->create($file, $request->user_id, $request->id ?: AppConstant::ROOT_FOLDER_ID);
 
             if ($path != -1) {
                 return $this->responseSuccessWithData(['path' => $path], 201);
@@ -71,7 +71,7 @@ class FileController extends Controller
 
     public function indexFolder(Request $request)
     {
-        $folders = $this->awsS3->indexFolder($request->user_id, $request->id ?: 1);
+        $folders = $this->awsS3->indexFolder($request->user_id, $request->id ?: AppConstant::ROOT_FOLDER_ID);
         if ($folders) {
             $foldersArr =  collect(FolderResource::collection($folders));
             return  $this->responseSuccessWithData([
@@ -101,15 +101,13 @@ class FileController extends Controller
         if ($request->has('folderName')) {
 
             $folderName = $request->input('folderName');
-            $upperFolderId = $request->id;
-            $path = $this->awsS3->createFolder($folderName, $request->user_id, $upperFolderId);
+            $upperFolderId = $request->id ?: AppConstant::ROOT_FOLDER_ID;
+            $results = $this->awsS3->createFolder($folderName, $request->user_id, $upperFolderId);
 
-            if (is_array($path)) {
-                return $this->responseErrorWithData(['key' => AppConstant::WRONG_KEY]);
-            } else if ($path) {
-                return $this->responseSuccessWithData(['folder' => $path], 201);
+            if ($results['status']) {
+                return $this->responseSuccessWithData(['folder' => $results], 201);
             } else {
-                return $this->responseErrorWithData(['folder' => 'folder existed'], 400);
+                return $this->responseErrorWithData(['folder' => $results], 400);
             }
         }
         return $this->responseErrorWithData(['param' => 'Not found'], 401);

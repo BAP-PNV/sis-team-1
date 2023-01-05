@@ -30,12 +30,14 @@ Route::middleware(['file.auth'])->group(function () {
     Route::middleware('ownedByUser.folder')->group(function () {
         Route::post('folder/{id}', [FileController::class, 'createFolder']);
         Route::delete('folder/{id}', [FileController::class, 'deleteFolder']);
-        Route::get('folders', [FileController::class, 'indexFolder']);
         Route::get('folder/{id}', [FileController::class, 'indexFolder']);
     });
 
-    Route::post('file/{id}', [FileController::class, 'create']);
+    Route::get('folders', [FileController::class, 'indexFolder']);
+    Route::post('folder', [FileController::class, 'createFolder']);
+
     Route::get('files', [FileController::class, 'index']);
+    Route::post('file', [FileController::class, 'create']);
 
     Route::middleware('ownedByUser.file')->group(
         function () {
@@ -52,19 +54,34 @@ Route::group(
         'prefix' => 'dashboard'
     ],
     function () {
-        Route::get('folder/{id}', [FileController::class, 'indexFolder']);
         Route::get('', [DashboardController::class, 'index']);
+
         Route::get("me", [DashboardController::class, "me"]);
 
         Route::post('refresh-token', [AuthController::class, 'refresh']);
 
-        Route::get('files/{id}', [FileController::class, 'index']);
-        Route::post('file', [FileController::class, 'create']);
-        Route::delete('file/{id}', [FileController::class, 'destroy']);
+        Route::middleware(['file.auth'])->group(function () {
 
-        Route::post('folder/{id}', [FileController::class, 'createFolder']);
-        Route::delete('folders', [FileController::class, 'destroyFolder']);
-        Route::get('folders', [FileController::class, 'showFolder']);
+            Route::middleware('ownedByUser.folder')->group(function () {
+                Route::post('folder/{id}', [FileController::class, 'createFolder']);
+                Route::delete('folder/{id}', [FileController::class, 'deleteFolder']);
+                Route::get('folder/{id}', [FileController::class, 'indexFolder']);
+            });
+
+            Route::get('folders', [FileController::class, 'indexFolder']);
+            Route::post('folder', [FileController::class, 'createFolder']);
+
+            Route::get('files', [FileController::class, 'index']);
+            Route::post('file', [FileController::class, 'create']);
+
+            Route::middleware('ownedByUser.file')->group(
+                function () {
+                    Route::post('folder/{id}/file', [FileController::class, 'create']);
+                    Route::get('folder/{id}/file', [FileController::class, 'show']);
+                    Route::delete('file/{id}', [FileController::class, 'destroy']);
+                }
+            );
+        });
     }
 );
 
