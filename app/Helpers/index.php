@@ -66,7 +66,8 @@ if (!function_exists('checkUserOwnedFolder')) {
     function checkUserOwnedFolder(int $userId, int $folderId): bool
     {
         $folder = new Folder();
-        if ($folder->find($folderId)->user_id == $userId) {
+        $folderExist = $folder->find($folderId);
+        if ($folderExist && $folderExist->user_id == $userId) {
             return true;
         }
         return false;

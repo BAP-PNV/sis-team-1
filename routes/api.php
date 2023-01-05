@@ -74,6 +74,8 @@ Route::group(
 
                 Route::post('folder/{id}/file', [FileController::class, 'create']);
                 Route::get('folder/{id}/file', [FileController::class, 'index']);
+
+                Route::get('folder/{id}/file-folder',[DashboardController::class,'getFileAndFolder']);
             });
 
             Route::get('folders', [FileController::class, 'indexFolder']);
