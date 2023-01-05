@@ -37,21 +37,21 @@ class AwsS3Service implements IAwsService
         return $this->imageRepository->index($userId, $folderId);
     }
 
-    public function create(UploadedFile $file, int $idUser, int $upperFolder)
+    public function create(UploadedFile $file, int $userId, int $upperFolder)
     {
         $size = convertBtoMB($file->getSize());
-        if (AppConstant::STORAGE > (checkStorage($idUser) + $size)) {
+        if (AppConstant::STORAGE > (checkStorage($userId) + $size)) {
 
             if ($upperFolder == AppConstant::ROOT_FOLDER_ID) {
-                $upperPath = "";
-            } else {
-                $upperPath = reversPath($upperFolder, $this->folderRepository);
-                $fileName = time() . '-' . $file->getClientOriginalName();
+                $upperFolder =  $this->folderRepository->findUserRootFolder($userId);
             }
+
+            $upperPath = reversPath($upperFolder, $this->folderRepository);
+            $fileName = time() . '-' . $file->getClientOriginalName();
 
             $url = AppConstant::ROOT_FOLDER_S3_PATH . $upperPath . $fileName;
             $image = [
-                'user_id' => $idUser,
+                'user_id' => $userId,
                 'folder_id' => $upperFolder,
                 'url' => $url,
                 'size' => $size

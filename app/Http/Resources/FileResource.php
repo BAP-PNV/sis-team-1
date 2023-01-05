@@ -16,7 +16,8 @@ class FileResource extends JsonResource
     {
         return [
             'url' => config('constants.s3_url_top') . $this->url,
-            'size' => $this->size
+            'size' => $this->size,
+            'id' => $this->id
         ];
     }
 }
