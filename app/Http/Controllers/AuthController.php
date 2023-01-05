@@ -63,10 +63,11 @@ class AuthController extends Controller
      */
     public function confirm(Request $request)
     {
-        if ($this->auth->confirmRegister($request)) {
-            return $this->responseSuccessWithData(["user" => "create new user successful"], 201);
+        $result = $this->auth->confirmRegister($request);
+        if ($result['status']) {
+            return $this->responseSuccessWithData($result, 201);
         }
-        return $this->responseErrorWithData(["user" => "please check the email"]);;
+        return $this->responseErrorWithData($result);;
     }
 
     /**
@@ -80,7 +81,7 @@ class AuthController extends Controller
         $validator = $request->validated();
         $token = $this->auth->register($validator);
         Mail::to($validator['email'])->send(new Registered($token));
-//        return $validator['email'];
+        //        return $validator['email'];
         return response()->json([
             'message' => $validator['email'],
             'token' => $token
@@ -101,8 +102,4 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function me()
-    {
-        return $this->responseSuccessWithData(['data' => auth()->user()]);;
-    }
 }

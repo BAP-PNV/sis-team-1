@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FileController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -21,13 +22,12 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::post('register', [AuthController::class, "register"]);
-Route::match(['POST', 'GET'], 'login', [AuthController::class, "login"])->name('login');
-Route::get("/confirm", [AuthController::class, "confirm"])->middleware('jwt.auth.middleware')->name('confirm');
+Route::post('login', [AuthController::class, "login"])->name('login');
+Route::match(['POST', 'GET'], "confirm", [AuthController::class, "confirm"])->middleware('jwt.auth.middleware')->name('confirm');
 
 Route::middleware(['file.auth'])->group(function () {
 
     Route::middleware('ownedByUser.folder')->group(function () {
-
         Route::post('folder/{id}', [FileController::class, 'createFolder']);
         Route::delete('folder/{id}', [FileController::class, 'deleteFolder']);
         Route::get('folders', [FileController::class, 'indexFolder']);
@@ -52,14 +52,17 @@ Route::group(
         'prefix' => 'dashboard'
     ],
     function () {
+        Route::get('folder/{id}', [FileController::class, 'indexFolder']);
+        Route::get('', [DashboardController::class, 'index']);
+        Route::get("me", [DashboardController::class, "me"]);
 
-        Route::get("me", [AuthController::class, "me"]);
+        Route::post('refresh-token', [AuthController::class, 'refresh']);
 
         Route::get('files/{id}', [FileController::class, 'index']);
         Route::post('file', [FileController::class, 'create']);
         Route::delete('file/{id}', [FileController::class, 'destroy']);
 
-        Route::post('folders', [FileController::class, 'createFolder']);
+        Route::post('folder/{id}', [FileController::class, 'createFolder']);
         Route::delete('folders', [FileController::class, 'destroyFolder']);
         Route::get('folders', [FileController::class, 'showFolder']);
     }

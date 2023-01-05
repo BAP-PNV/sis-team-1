@@ -12,4 +12,7 @@ interface IAwsService
     public function createFolder(string $folderName, int $userID, int $upperFolder);
     public function showFolder(string $folderName);
     public function deleteFolder(int $id);
+    public function index(int $userId, ?int $folderId);
+    public function indexFolder(int $userId, ?int $folderId);
+
 }

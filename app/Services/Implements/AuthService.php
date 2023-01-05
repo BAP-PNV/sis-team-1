@@ -78,10 +78,18 @@ class AuthService implements IAuthService
             Mail::to($user->email)->send(new AccountInfo($user));
 
             DB::commit();
-            return true;
+            return [
+                'status' => true,
+                'token' => auth()->login($user),
+                'user' => "user create successful",
+                'username' => $user['username']
+            ];
         } catch (\Exception $e) {
             DB::rollBack();
-            return false;
+            return [
+                'status' => false,
+                "user" => "please check the email"
+            ];
         }
     }
 
