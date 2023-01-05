@@ -167,18 +167,6 @@ class AwsS3Service implements IAwsService
         ];
     }
 
-    public function showFolder(string $folderName)
-    {
-        if (Storage::disk('s3')->exists(AppConstant::ROOT_FOLDER_S3_PATH  . $folderName)) {
-            $folder = Storage::disk('s3')->allDirectories(AppConstant::ROOT_FOLDER_S3_PATH  . $folderName);
-            return $folder;
-        } else {
-            return false;
-        }
-    }
-
-
-
     public function deleteFolder($id)
     {
         $folder = $this->folderRepository->find($id);

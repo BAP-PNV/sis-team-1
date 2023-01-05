@@ -113,16 +113,6 @@ class FileController extends Controller
         return $this->responseErrorWithData(['param' => 'Not found'], 401);
     }
 
-    public function showFolder(Request $request)
-    {
-        $path = $this->awsS3->showFolder('$folderName');
-        if ($path) {
-            return $this->responseSuccessWithData(['folders' => $path], 201);
-        } else {
-            return $this->responseErrorWithData(['folder' => 'Not exist'], 401);
-        }
-    }
-
     public function deleteFolder(Request $request)
     {
         $responseArray = [

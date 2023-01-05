@@ -64,7 +64,7 @@ Route::group(
 
             Route::middleware('ownedByUser.folder')->group(function () {
                 Route::post('folder/{id}', [FileController::class, 'createFolder']);
-                Route::delete('folder/{id}', [FileController::class, 'deleteFolder']);
+                Route::delete('folder/{id}',    [FileController::class, 'deleteFolder']);
                 Route::get('folder/{id}', [FileController::class, 'indexFolder']);
             });
 
