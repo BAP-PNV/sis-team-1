@@ -60,15 +60,12 @@ class FileController extends Controller
      */
     public function destroy($id)
     {
-        $responseArray = [
-            true => $this->responseSuccessWithData(['file' => 'delete successful']),
-            false => $this->responseErrorWithData(['file' => 'can not delete this file']),
-            AppConstant::FILE_NOT_EXIST => $this->responseErrorWithData(['file' => 'File not found'])
+        $results = $this->awsS3->delete($id);
 
-        ];
-        $status = $this->awsS3->delete($id);
-        return $status;
-        // return $responseArray[$status];
+        if (!$results['status']) {
+            $this->responseErrorWithData(['file' => $results['msg']]);
+        }
+        return $this->responseSuccessWithData(['file' => $results['msg']]);
     }
 
 

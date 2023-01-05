@@ -77,35 +77,42 @@ class AwsS3Service implements IAwsService
     public function delete(int $id)
     {
         $image = $this->imageRepository->find($id);
-        if ($image != null) {
-            $url = $image->url;
-            if (Storage::disk('s3')->exists($url)) {
 
+        if ($image == null) {
+            return [
+                'status' => false,
+                'msg' => AppConstant::FILE_NOT_EXIST
+            ];
+        }
+
+        $url = $image->url;
+            if (Storage::disk('s3')->exists($url)) {
                 DB::beginTransaction();
                 try {
-
                     Storage::disk('s3')->delete($url);
                     $this->imageRepository->delete($id);
                     DB::commit();
                 } catch (\Exception) {
-
                     DB::rollBack();
-                    return false;
+                    return [
+                        'status' => false,
+                        'msg' => 'can not delete this file'
+                    ];
                 }
-                return true;
+                return [
+                    'status' => true,
+                    'msg' => 'delete successful'
+                ];
             }
-        } else {
-            return AppConstant::FILE_NOT_EXIST;
-        }
     }
 
 
-    public function indexFolder(int $userId, int $upperFolderId)
+    public function indexFolder(int $userId, ?int $folderId)
     {
-        if ($upperFolderId == AppConstant::ROOT_FOLDER_ID) {
-            $upperFolderId = $this->folderRepository->findUserRootFolder($userId);
+        if ($folderId == null) {
+            $folderId = $this->folderRepository->findUserRootFolder($userId);
         }
-        return $this->folderRepository->index($userId, $upperFolderId);
+        return $this->folderRepository->index($userId, $folderId);
     }
 
     public function createFolder(string $folderName, int $userId, int $upperFolder)
