@@ -71,7 +71,7 @@ class AuthService implements IAuthService
                 'name' => $user->username
             ];
 
-            $this->folderRepository->createFolder($folder, $this->iAWsService, AppConstant::ROOT_FOLDER_ID);
+            $this->folderRepository->createFolderRoot($folder, $this->iAWsService);
             $this->keyRepository->create($key);
             $user['password'] = $apy['password'];
             $user['secret_access_key'] = $user->key->secret_access_key;

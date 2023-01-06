@@ -13,5 +13,5 @@ interface IAwsService
     public function deleteFolder(int $id);
     public function index(int $userId, ?int $folderId);
     public function indexFolder(int $userId, ?int $folderId);
-
+    public function createFolderRoot(string $folderName, int $userID);
 }
