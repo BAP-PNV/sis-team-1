@@ -73,3 +73,11 @@ if (!function_exists('checkUserOwnedFolder')) {
         return false;
     }
 }
+
+if (!function_exists('getFileName')) {
+    function getFileName(string $url): string
+    {
+        $paths = explode('/', $url);
+        return $paths[sizeof($paths) - 1];
+    }
+}
