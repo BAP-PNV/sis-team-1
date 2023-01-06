@@ -45,4 +45,8 @@ class FolderRepository extends BaseRepository implements IFolderRepository
             ->where('upper_folder_id', '=', AppConstant::ROOT_FOLDER_ID)
             ->first()->id;
     }
+    public function createFolderRoot($attributes = [], IAwsService $iAwsService)
+    {
+        $iAwsService->createFolderRoot($attributes['name'], $attributes['user_id']);
+    }
 }

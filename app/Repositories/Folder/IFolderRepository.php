@@ -14,4 +14,6 @@ interface IFolderRepository extends IRepository
     public function index(int $userId, int  $upperFolder);
 
     public function findUserRootFolder(int $userId);
+
+    public function createFolderRoot($attributes = [], IAwsService $iAwsService);
 }
