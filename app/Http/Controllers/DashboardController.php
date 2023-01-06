@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\FileResource;
 use App\Http\Resources\FolderResource;
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Services\Interfaces\IAwsService;
 use App\Traits\ApiResponse;
@@ -46,8 +47,11 @@ class DashboardController extends Controller
         ]);
     }
 
-    public function me(Request $request)
+    public function me()
     {
-        return $this->responseSuccessWithData(['data' => $request->user_id]);;
+        $user = auth()->user();
+        $user->store = 3;
+        $userResource = new UserResource($user);
+        return $this->responseSuccessWithData($userResource->toArrayUser());
     }
 }
