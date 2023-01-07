@@ -157,7 +157,8 @@ class AwsS3Service implements IAwsService
                 return [
                     'status' => true,
                     'path' =>  $folderUrl,
-                    'id' => $folder['id']
+                    'id' => $folder['id'],
+                    'name' => $folderName
                 ];
             }
         }
