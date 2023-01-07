@@ -130,7 +130,10 @@ class AwsS3Service implements IAwsService
             $url = AppConstant::ROOT_FOLDER_S3_PATH  . $path . $folderName;
 
             if (Storage::disk('s3')->exists($url)) {
-                return false;
+                return [
+                    'status' => false,
+                    'folder' => 'folder existed'
+                ];
             } else {
 
                 $folder = [
@@ -157,7 +160,8 @@ class AwsS3Service implements IAwsService
                 return [
                     'status' => true,
                     'path' =>  $folderUrl,
-                    'id' => $folder['id']
+                    'id' => $folder['id'],
+                    'name' => $folderName
                 ];
             }
         }
