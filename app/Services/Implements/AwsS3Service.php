@@ -174,14 +174,13 @@ class AwsS3Service implements IAwsService
         if (Storage::disk('s3')->exists($url)) {
             return false;
         } else {
-
             $folder = [
                 'user_id' => $userID,
                 'upper_folder_id' => AppConstant::ROOT_FOLDER_ID,
                 'name' => $folderName
             ];
             $folder =  $this->folderRepository->create($folder);
-            Storage::disk('s3')->makeDirectory($url);
+            return Storage::disk('s3')->makeDirectory($url);
         }
     }
 
