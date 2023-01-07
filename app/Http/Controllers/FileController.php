@@ -105,9 +105,9 @@ class FileController extends Controller
             $results = $this->awsS3->createFolder($folderName, $request->user_id, $upperFolderId);
 
             if ($results['status']) {
-                return $this->responseSuccessWithData(['folder' => $results], 201);
+                return $this->responseSuccessWithData($results, 201);
             } else {
-                return $this->responseErrorWithData(['folder' => $results], 400);
+                return $this->responseErrorWithData($results, 400);
             }
         }
         return $this->responseErrorWithData(['param' => 'Not found'], 401);
