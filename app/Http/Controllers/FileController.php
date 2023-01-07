@@ -76,7 +76,7 @@ class FileController extends Controller
             $foldersArr =  collect(FolderResource::collection($folders));
             return  $this->responseSuccessWithData([
                 'parent_id' => $request->id ?: null,
-                'folders ' =>  $foldersArr
+                'folders' =>  $foldersArr
             ]);
         };
         return $this->responseErrorWithData(['permission' => 'You can not access this folder']);
