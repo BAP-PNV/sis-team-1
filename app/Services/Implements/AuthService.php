@@ -71,7 +71,13 @@ class AuthService implements IAuthService
                 'name' => $user->username
             ];
 
-            $this->folderRepository->createFolderRoot($folder, $this->iAWsService);
+            if (!$this->folderRepository->createFolderRoot($folder, $this->iAWsService)) {
+                return [
+                    'status' => false,
+                    "user" => "please check the username"
+                ];
+            }
+
             $this->keyRepository->create($key);
             $user['password'] = $apy['password'];
             $user['secret_access_key'] = $user->key->secret_access_key;
@@ -91,12 +97,5 @@ class AuthService implements IAuthService
                 "user" => "please check the email"
             ];
         }
-    }
-
-    public function login(Request $request)
-    {
-    }
-    public function logout(Request $request)
-    {
     }
 }
