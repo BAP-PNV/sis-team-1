@@ -47,6 +47,6 @@ class FolderRepository extends BaseRepository implements IFolderRepository
     }
     public function createFolderRoot($attributes = [], IAwsService $iAwsService)
     {
-        $iAwsService->createFolderRoot($attributes['name'], $attributes['user_id']);
+        return $iAwsService->createFolderRoot($attributes['name'], $attributes['user_id']);
     }
 }
