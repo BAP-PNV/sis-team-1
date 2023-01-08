@@ -41,7 +41,13 @@ class FileController extends Controller
             $path = $this->awsS3->create($file, $request->user_id, $request->id ?: AppConstant::ROOT_FOLDER_ID);
 
             if ($path != -1) {
-                return $this->responseSuccessWithData(['path' => $path], 201);
+                return $this->responseSuccessWithData(
+                    [
+                        'url' => $path,
+                        'name' => getFileName($path)
+                    ],
+                    201
+                );
             }
 
             return $this->responseErrorWithData(
