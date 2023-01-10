@@ -196,11 +196,12 @@ class AwsS3Service implements IAwsService
         $path = reversPath($upperFolderId, $this->folderRepository);
 
         $url = AppConstant::ROOT_FOLDER_S3_PATH  . $path . $folder->name;
-
+        
         if (Storage::disk('s3')->exists($url)) {
 
             $childrenArray = getChildren($folder);
-
+            Storage::disk('s3')->deleteDirectory($url);
+            
             // Add current folder to list children to remove all include current folder
 
             array_unshift($childrenArray, $id);
