@@ -76,6 +76,7 @@ Route::group(
                 Route::get('folder/{id}/file', [FileController::class, 'index']);
 
                 Route::get('folder/{id}/file-folder',[DashboardController::class,'getFileAndFolder']);
+                Route::get('/size',[DashboardController::class,'getImageStorage']);
             });
 
             Route::get('folders', [FileController::class, 'indexFolder']);

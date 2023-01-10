@@ -228,4 +228,9 @@ class AwsS3Service implements IAwsService
             return AppConstant::FOLDER_NOT_EXIST;
         }
     }
+
+    public function imageStorage(int $userId)
+    {
+        return $this->imageRepository->calStorage($userId);
+    }
 }

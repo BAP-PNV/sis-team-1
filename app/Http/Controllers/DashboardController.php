@@ -54,4 +54,14 @@ class DashboardController extends Controller
         $userResource = new UserResource($user);
         return $this->responseSuccessWithData($userResource->toArrayUser());
     }
+
+    public function getImageStorage()
+    {
+        $userId = auth()->user()->id;
+        $size = $this->awsS3->imageStorage($userId);
+        return $this->responseSuccessWithData([
+            "size" => $size,
+            "Message" => "Success!!!"
+        ]);
+    }
 }
