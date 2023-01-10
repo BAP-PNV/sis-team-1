@@ -32,6 +32,37 @@ class AuthController extends Controller
      * @param  mixed $request
      * @return void
      */
+    /**
+     * @OA\Post(
+     *  path="/api/login",
+     *  operationId="login",
+     *  summary="Get the list of resources",
+     *  tags={"Authentication"},
+     *      @OA\RequestBody(
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="multipart/form-data",
+     *             @OA\Schema(
+     *                 @OA\Property(
+     *                     description="email or username",
+     *                     property="email",
+     *                     type="string",
+     *                 ),
+     *                  @OA\Property(
+     *                     description="password",
+     *                     property="password",
+     *                     type="string",
+    
+     *                 ),
+     *                 required={"email","password"},
+     *                 
+     *             )
+     *         )
+     *     ),
+     *  @OA\Response(response=200, description="Return a list of resources"),
+     *  security={{ "apiAuth": {} }}
+     * )
+     */
     public function login(Request $request)
     {
         $validator = Validator::make($request->all(), [

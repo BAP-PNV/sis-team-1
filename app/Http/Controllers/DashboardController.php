@@ -46,6 +46,15 @@ class DashboardController extends Controller
         ]);
     }
 
+    /**
+     * @OA\Get(
+     *  path="/api/dashboard/me",
+     *  summary="Get the list of resources",
+     *  tags={"Profile"},
+     *  @OA\Response(response=200, description="Return a list of resources"),
+     *  security={{ "apiAuth": {} }}
+     * )
+     */
     public function me()
     {
         $user = auth()->user();
