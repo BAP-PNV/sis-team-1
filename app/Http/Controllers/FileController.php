@@ -19,6 +19,45 @@ class FileController extends Controller
         $this->awsS3 = $awsS3;
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/files",
+     *     operationId="index",
+     *     summary="Get all files ",
+     *     tags={"Files"},
+     *     description="get all file",
+     *     @OA\Parameter(
+     *          name="access_key",
+     *          description="api key",
+     *          required=true,
+     *          in="query",
+     *          @OA\Schema(
+     *              type="string"
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *          
+     *       ),
+     *       @OA\Response(
+     *          response=400, description="Error",
+     *          @OA\JsonContent(
+     *             @OA\Property(property="status", type="integer", example="200"),
+     *             @OA\Property(property="data",type="object")
+     *          )
+     *       ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      )
+     * )
+     */
+
     public function index(Request $request)
     {
         $files = collect(FileResource::collection($this
@@ -28,11 +67,59 @@ class FileController extends Controller
         return $this->responseSuccessWithData($files->toArray());;
     }
 
+
     /**
      * Show the form for creating a new resource.
      *
      * @return \Illuminate\Http\Response
      */
+    /**
+     * @OA\Post(
+     *     path="/api/file",
+     *     summary="Get all files and folders",
+     *     operationId="create",
+     *     tags={"Files"},
+     *     description="get all file and folder",
+     *     @OA\Parameter(
+     *          name="access_key",
+     *          description="api key",
+     *          required=true,
+     *          in="query",
+     *          @OA\Schema(
+     *              type="string"
+     *          )
+     *      ),
+     *      @OA\RequestBody(
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="multipart/form-data",
+     *             @OA\Schema(
+     *                 @OA\Property(
+     *                     description="file to upload",
+     *                     property="image",
+     *                     type="string",
+     *                     format="binary",
+     *                 ),
+     *                 required={"image"}
+     *             )
+     *         )
+     *     ),
+     *      @OA\Response(
+     *          response=201,
+     *          description="Successful operation",
+     *          
+     *       ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      )
+     * )
+     */
+
     public function create(Request $request)
     {
         if ($request->hasFile('image')) {
@@ -75,9 +162,43 @@ class FileController extends Controller
     }
 
 
+    /**
+     * @OA\Get(
+     *     path="/api/folders",
+     *     operationId="indexFolder",
+     *     summary="Get folders",
+     *     tags={"Folders"},
+     *     description="get all file and folder",
+     *     @OA\Parameter(
+     *          name="access_key",
+     *          description="api key",
+     *          required=true,
+     *          in="query",
+     *          @OA\Schema(
+     *              type="string"
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *          
+     *       ),
+     *       @OA\Response(
+     *          response=400, description="Error",
+     *       ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      )
+     * )
+     */
     public function indexFolder(Request $request)
     {
-        $folders = $this->awsS3->indexFolder($request->user_id, $request->id ?: AppConstant::ROOT_FOLDER_ID);
+        $folders = $this->awsS3->indexFolder($request->user_id, $request->id ?: null);
         if ($folders) {
             $foldersArr =  collect(FolderResource::collection($folders));
             return  $this->responseSuccessWithData([
@@ -88,20 +209,49 @@ class FileController extends Controller
         return $this->responseErrorWithData(['permission' => 'You can not access this folder']);
     }
 
+    /**
+     * @OA\Post(
+     *     path="/api/folder",
+     *     summary="create new folder",
+     *     operationId="createFolder",
+     *     tags={"Folders"},
+     *     description="get all file and folder",
+     *     @OA\Parameter(
+     *          name="access_key",
+     *          description="api key",
+     *          required=true,
+     *          in="query",
+     *          @OA\Schema(
+     *              type="string"
+     *          )
+     *      ),
 
-    public function destroyFolder(Request $request)
-    {
-        if ($request->has('folderName')) {
-            $folderName = $request->get('folderName');
-            $status = $this->awsS3->deleteFolder($folderName, $request->user_id);
-            if ($status) {
-                return $this->responseSuccess(200);
-            }
-            return $this->responseErrorWithData(['folder' => 'Not exist'], 401);
-        }
-        return $this->responseErrorWithData(['folder' => 'Not found']);
-    }
-
+     *      @OA\RequestBody(
+     *         required=true,
+     *            @OA\Schema(
+     *                 @OA\Property(
+     *                     description="Name of folder",
+     *                     property="folderName",
+     *                     type="string",
+     *                 ),
+     *                 required={"folderName"}
+     *             )
+     *     ),
+     *      @OA\Response(
+     *          response=201,
+     *          description="Successful operation",
+     *          
+     *       ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      )
+     * )
+     */
     public function createFolder(Request $request)
     {
         if ($request->has('folderName')) {
@@ -119,6 +269,50 @@ class FileController extends Controller
         return $this->responseErrorWithData(['param' => 'Not found'], 401);
     }
 
+
+    /**
+     * @OA\Delete(
+     *     path="/api/folder/{id}",
+     *     operationId="deleteFolder",
+     *     summary="delete folders",
+     *     tags={"Folders"},
+     *     description="get all file and folder",
+     *     @OA\Parameter(
+     *          name="access_key",
+     *          description="api key",
+     *          required=true,
+     *          in="query",
+     *          @OA\Schema(
+     *              type="string"
+     *          )
+     *      ),
+     *      @OA\Parameter(
+     *          name="id",
+     *          description="key to delete folder",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *          
+     *       ),
+     *       @OA\Response(
+     *          response=400, description="Error",
+     *       ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      )
+     * )
+     */
     public function deleteFolder(Request $request)
     {
         $responseArray = [
