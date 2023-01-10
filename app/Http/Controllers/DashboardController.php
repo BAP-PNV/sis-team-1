@@ -21,7 +21,6 @@ class DashboardController extends Controller
         $this->awsS3 = $awsS3;
     }
 
-
     public function index()
     {
 
