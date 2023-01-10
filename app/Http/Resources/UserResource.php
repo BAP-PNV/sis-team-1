@@ -28,7 +28,7 @@ class UserResource extends JsonResource
             'email' => $this->email,
             'secret_key' => $this->key->secret_access_key,
             'storage_total' => AppConstant::STORAGE,
-            'storage' => 0
+            'storage' => $this->store
         ];
     }
 }

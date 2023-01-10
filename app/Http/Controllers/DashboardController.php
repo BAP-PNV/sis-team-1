@@ -50,7 +50,7 @@ class DashboardController extends Controller
     public function me()
     {
         $user = auth()->user();
-        $user->store = 3;
+        $user->store = $this->getImageStorage();
         $userResource = new UserResource($user);
         return $this->responseSuccessWithData($userResource->toArrayUser());
     }
@@ -59,9 +59,6 @@ class DashboardController extends Controller
     {
         $userId = auth()->user()->id;
         $size = $this->awsS3->imageStorage($userId);
-        return $this->responseSuccessWithData([
-            "size" => $size,
-            "Message" => "Success!!!"
-        ]);
+        return $size;
     }
 }
