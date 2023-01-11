@@ -217,8 +217,6 @@ class AwsS3Service implements IAwsService
                     $folder->delete();
                 }
 
-                Storage::disk('s3')->deleteDirectory($url);
-
                 DB::commit();
                 return AppConstant::RETURN_TRUE;
             } catch (\Exception) {
