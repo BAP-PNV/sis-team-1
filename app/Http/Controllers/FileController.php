@@ -151,6 +151,51 @@ class FileController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+
+        /**
+     * @OA\Delete(
+     *     path="/api/file/{id}",
+     *     operationId="destroy",
+     *     summary="delete folders",
+     *     tags={"Files"},
+     *     description="get all file and folder",
+     *     @OA\Parameter(
+     *          name="access_key",
+     *          description="api key",
+     *          required=true,
+     *          in="query",
+     *          @OA\Schema(
+     *              type="string"
+     *          )
+     *      ),
+     *      @OA\Parameter(
+     *          name="id",
+     *          description="key to delete folder",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *          
+     *       ),
+     *       @OA\Response(
+     *          response=400, description="Error",
+     *       ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      )
+     * )
+     */
+
     public function destroy($id)
     {
         $results = $this->awsS3->delete($id);
@@ -225,18 +270,15 @@ class FileController extends Controller
      *              type="string"
      *          )
      *      ),
-
-     *      @OA\RequestBody(
-     *         required=true,
-     *            @OA\Schema(
-     *                 @OA\Property(
-     *                     description="Name of folder",
-     *                     property="folderName",
-     *                     type="string",
-     *                 ),
-     *                 required={"folderName"}
-     *             )
-     *     ),
+     *     @OA\Parameter(
+     *          name="folderName",
+     *          description="name of folder",
+     *          required=true,
+     *          in="query",
+     *          @OA\Schema(
+     *              type="string"
+     *          )
+     *      ),
      *      @OA\Response(
      *          response=201,
      *          description="Successful operation",
@@ -324,7 +366,7 @@ class FileController extends Controller
             $this->responseSuccessWithData(['folder' => 'delete successful'])
         ];
 
-        $response = $this->awsS3->deleteFolder($request->id);
+        $response = $this->awsS3->deleteFolder($request->id);   
         return $responseArray[$response];
     }
 }
