@@ -56,16 +56,6 @@
                 ]
             }
         },
-        "/": {
-            "get": {
-                "description": "Home page",
-                "responses": {
-                    "default": {
-                        "description": "Welcome page"
-                    }
-                }
-            }
-        },
         "/api/dashboard/me": {
             "get": {
                 "tags": [
