@@ -21,7 +21,6 @@ class DashboardController extends Controller
         $this->awsS3 = $awsS3;
     }
 
-
     public function index()
     {
 
@@ -47,11 +46,27 @@ class DashboardController extends Controller
         ]);
     }
 
+    /**
+     * @OA\Get(
+     *  path="/api/dashboard/me",
+     *  summary="Get the list of resources",
+     *  tags={"Profile"},
+     *  @OA\Response(response=200, description="Return a list of resources"),
+     *  security={{ "apiAuth": {} }}
+     * )
+     */
     public function me()
     {
         $user = auth()->user();
-        $user->store = 3;
+        $user->store = $this->getImageStorage();
         $userResource = new UserResource($user);
         return $this->responseSuccessWithData($userResource->toArrayUser());
+    }
+
+    public function getImageStorage()
+    {
+        $userId = auth()->user()->id;
+        $size = $this->awsS3->imageStorage($userId);
+        return $size;
     }
 }

@@ -22,7 +22,7 @@ class VerifyAccountUpload
     {
         if ($request->has('access_key') || auth()->user()) {
 
-            $idUser = auth()->user()->id  ?: SecretKeyHelper::checkKey($request->get('access_key'));
+            $idUser = auth()->user()  ? auth()->user()->id : SecretKeyHelper::checkKey($request->get('access_key'));
 
             if ($idUser == AppConstant::RETURN_FALSE) {
                 return $this->responseErrorUnauthorized();

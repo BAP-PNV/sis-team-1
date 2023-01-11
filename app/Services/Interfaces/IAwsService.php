@@ -14,4 +14,5 @@ interface IAwsService
     public function index(int $userId, ?int $folderId);
     public function indexFolder(int $userId, ?int $folderId);
     public function createFolderRoot(string $folderName, int $userID);
+    public function imageStorage(int $userId);
 }
