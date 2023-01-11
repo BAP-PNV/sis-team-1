@@ -15,6 +15,7 @@
 
             <p>Keys: {{ $data->secret_access_key }}</p>
 
+            <p>API endpoint: {{config('constants.APP_URL')}}/api/</p>
 
             <p class="text-sm">
             <h5>Best regards!<br> Cloud</h5>
